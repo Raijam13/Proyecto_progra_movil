@@ -10,22 +10,36 @@ Además, integrará un **sistema de inteligencia artificial** que actuará como 
 **Guía de configuración del ambiente de desarrollo en Flutter**
 1. Instalación de Android Studio
 - Instalamos la última versión de Android Studio.
+![](docs/img/image7.png)
 - Después de instalarlo, tendremos este menú.
+![](docs/img/image10.png)
 - Hacemos click en more actions y luego en SDK Manager.
+![](docs/img/image5.png)
 - Instalamos Android SDK Command-line Tools
-
+![](docs/img/image6.png)
 2. Instalación de Flutter SDK
 - Una vez instalado podemos cerrar Android Studio. Ahora vamos a la página de flutter y descargamos el Flutter SDK para windows.
+![](docs/img/image4.png)
 - De preferencia, creamos una carpeta en nuestro disco C llamada dev, allí descomprimimos el Flutter SDK.
+![](docs/img/image9.png)
 - Entramos en la carpeta y copiamos la ruta del directorio bin, en este caso es ‘C:\dev\flutter\bin’. Apretamos la tecla Win y buscamos ‘Editar las variables de entorno del sistema’ y le damos enter. Debemos estar en la siguiente ventana.
+![](docs/img/image3.png)
 - Le damos click en Variables de entorno… y luego le damos click al registro ‘Path’.
+![](docs/img/image1.png)
 - En caso no aparezca ‘Path’ lo demos crear. Presionamos ‘Editar’ y pegamos la ruta ‘C:\dev\flutter\bin’. Luego presionamos en ‘Aceptar’.
-
+![](docs/img/image8.png)
 3. Aceptar licencias de Android
 - Ahora debemos abrir nuestra terminal y ejecutar el comando ‘flutter doctor --android-licenses’. Aceptamos todas las condiciones. Al final nos debe salir este mensaje.
-
+```bash
+flutter doctor --android-licenses
+```
+![](docs/img/image11.png)
 4. Verificar la correcta instalación de Flutter
 - Abrimos la terminal y ejecutamos el comando ‘flutter doctor’ y si nos debe salir esta salida.
+```bash
+flutter doctor
+```
+![](docs/img/image2.png)
 - Si nos sale una alerta en Visual Studio lo podemos obviar ya que no desarrollaremos para Windows.
 ## Diagrama de despliegue 
 
