@@ -45,25 +45,25 @@ flutter doctor
 La arquitectura está conformada por un dispositivo Android, donde se ejecuta la aplicación móvil desarrollada en Flutter. Este cliente se conecta a través de Internet mediante protocolo HTTPS a una API REST implementada en Ruby, desplegada en un servidor EC2 de AWS. El backend gestiona la lógica de negocio y el acceso a la base de datos SQLite3, encargada de almacenar de manera persistente la información de usuarios, transacciones y metas. Adicionalmente, el backend consume una API externa de LLM (OpenAI), que brinda el servicio de inteligencia artificial para generar análisis financieros y recomendaciones personalizadas.
 ![](docs/img/Diagrama_de_despliegue.png)
 ## Requerimientos no funcionales 
-1. ### **Completitud funcional**
+1. **Completitud funcional**
 El producto software cumple todos los requerimientos especificados por el usuario
-2. ### **Disponibilidad**
+2. **Disponibilidad**
 El producto software tiene una disponibilidad del 99%
-3. ### **Coexistencia**
+3. **Coexistencia**
 El producto software es capaz de coexistir con la API OpenAI, compartiendo recursos e información común
-4. ### **Aprendizabilidad**
+4. **Aprendizabilidad**
 El usuario puede aprender a usar el software en 1h
-5. ### **Reconocibilidad de la adecuación**
+5. **Reconocibilidad de la adecuación**
 El usuario es capaz de entender si el software cubre sus necesidades
-6. ### **Autenticidad**
+6. **Autenticidad**
 El sistema tiene la capacidad para demostrar que la identidad de un sujeto o recurso es la que se afirma.
-7. ### **Capacidad para ser probado**
+7. **Capacidad para ser probado**
 Facilidad para probar componentes o modulos dentro del sistema
-8. ### **Modularidad**
+8. **Modularidad**
 El producto software puede soportar cambios en un componente sin que afecten a otros componentes.
-9. ### **No repudio**
+9. **No repudio**
 Capacidad de demostrar las acciones o eventos que han tenido lugar, de manera que dichas acciones o eventos no puedan ser repudiados posteriormente.
-10. ### **Compatibilidad**
+10. **Compatibilidad**
 El sistema puede ser usado en Andorid e iOS sin perder funcionalidades
 ## Diagramas de caso de uso (Requerimientos funcionales)
 
