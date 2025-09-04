@@ -72,7 +72,7 @@ flutter doctor
 
 ## Diagrama de despliegue 
 La arquitectura está conformada por un dispositivo Android, donde se ejecuta la aplicación móvil desarrollada en Flutter. Este cliente se conecta a través de Internet mediante protocolo HTTPS a una API REST implementada en Ruby, desplegada en un servidor EC2 de AWS. El backend gestiona la lógica de negocio y el acceso a la base de datos SQLite3, encargada de almacenar de manera persistente la información de usuarios, transacciones y metas. Adicionalmente, el backend consume una API externa de LLM (OpenAI), que brinda el servicio de inteligencia artificial para generar análisis financieros y recomendaciones personalizadas.
-![](docs/img/Diagrama_de_despliegue.png)
+![](docs/img/Diagrama_de_despliegue1.png)
 ## Requerimientos no funcionales 
 1. **Completitud funcional**
 
