@@ -1,0 +1,44 @@
+@startuml casoDeUsoBORRADOR
+title Sistema AprendeWallet - Casos de uso (Versión inicial)
+left to right direction
+skinparam packageStyle rectangle
+skinparam usecase {
+  BackgroundColor White
+  BorderColor #555
+}
+actor "Usuario" as U
+
+rectangle "Sistema AprendeWallet" {
+  package "Gestión de Cuenta" {
+    (Crear usuario) as UC1
+    (Inicio de sesión) as UC2
+    (Recuperar contraseña) as UC3
+  }
+  package "Movimientos y Control" {
+    (Registro de medio de ingresos de efectivo) as UC4
+    (Mantenimiento de gastos) as UC5
+    (Límite de gasto) as UC9
+  }
+  package "Planeación y Asistencia" {
+    (Crear planes de ahorro) as UC6
+    (Asistente financiero) as UC7
+    (Mostrar gráficos de la tendencia del saldo) as UC8
+  }
+
+  ' Relaciones de inclusión/extensión
+  UC3 .u.|> UC2 : «extend»\nOlvidó credenciales
+  UC7 ..> UC8 : «include»\nUsa analítica
+  UC7 ..> UC9 : «include»\nConsulta límites
+}
+
+' Asociaciones actor-UC
+U --> UC1
+U --> UC2
+U --> UC3
+U --> UC4
+U --> UC5
+U --> UC6
+U --> UC7
+U --> UC8
+U --> UC9
+@enduml
