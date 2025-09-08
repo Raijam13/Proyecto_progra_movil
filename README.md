@@ -112,4 +112,4 @@ em este lugar estan
 ![](docs/img/mockups/mockup2.png)
 ![](docs/img/mockups/mockup3.png)
 ![](docs/img/mockups/mockup4.png)
-![](docs/img/mockups/mockup5.png)
+![](docs/img/Mockups/mockup5.png)
