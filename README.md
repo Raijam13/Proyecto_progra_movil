@@ -107,6 +107,7 @@ La arquitectura está conformada por un dispositivo Android, donde se ejecuta la
 ## Diagramas de caso de uso (Requerimientos funcionales)
 
 ## Descripción de casos de uso (incluye mockups)
+em este lugar estan 
 ![](docs/img/mockups/mockup1.png)
 ![](docs/img/mockups/mockup2.png)
 ![](docs/img/mockups/mockup3.png)
