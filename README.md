@@ -108,8 +108,8 @@ La arquitectura está conformada por un dispositivo Android, donde se ejecuta la
 
 ## Descripción de casos de uso (incluye mockups)
 em este lugar estan 
-![](docs/img/mockups/mockup1.png)
-![](docs/img/mockups/mockup2.png)
-![](docs/img/mockups/mockup3.png)
-![](docs/img/mockups/mockup4.png)
+![](docs/img/Mockups/mockup1.png)
+![](docs/img/Mockups/mockup2.png)
+![](docs/img/Mockups/mockup3.png)
+![](docs/img/Mockups/mockup4.png)
 ![](docs/img/Mockups/mockup5.png)
