@@ -1,0 +1,123 @@
+@startuml
+!theme plain
+
+' Entidades principales
+entity Usuario {
+  * user_id : Integer <<PK>>
+  --
+  * email : Varchar(255) <<Unique>>
+  * password_hash : Varchar(255)
+  * nombre : Varchar(100)
+  apellido : Varchar(100)
+  fecha_registro : DateTime
+  moneda_predefinida : Varchar(3)
+  ultimo_login : DateTime
+  estado : Varchar(20)
+}
+
+entity Transaccion {
+  * transaccion_id : Integer <<PK>>
+  --
+  * user_id : Integer <<FK>>
+  * monto : Decimal(15,2)
+  * tipo : Varchar(10)
+  * fecha : DateTime
+  descripcion : Varchar(255)
+  comentario : Text
+  recurrente : Boolean
+  periodo_recurrencia : Varchar(20)
+}
+
+entity Categoria {
+  * categoria_id : Integer <<PK>>
+  --
+  * nombre : Varchar(100)
+  * tipo : Varchar(10)
+  predefinida : Boolean
+  user_id : Integer <<FK>>
+  categoria_padre_id : Integer <<FK>>
+}
+
+entity MetaAhorro {
+  * meta_id : Integer <<PK>>
+  --
+  * user_id : Integer <<FK>>
+  * nombre_meta : Varchar(255)
+  * monto_objetivo : Decimal(15,2)
+  monto_actual : Decimal(15,2)
+  * fecha_inicio : Date
+  * fecha_limite : Date
+  estado : Varchar(20)
+  tipo : Varchar(20)
+}
+
+entity LimiteGasto {
+  * limite_id : Integer <<PK>>
+  --
+  * user_id : Integer <<FK>>
+  * monto_limite : Decimal(15,2)
+  * periodo : Varchar(20)
+  categoria_id : Integer <<FK>>
+  activo : Boolean
+}
+
+entity ReporteFinanciero {
+  * reporte_id : Integer <<PK>>
+  --
+  * user_id : Integer <<FK>>
+  * mes : Integer
+  * año : Integer
+  total_ingresos : Decimal(15,2)
+  total_gastos : Decimal(15,2)
+  ahorro_mensual : Decimal(15,2)
+  porcentaje_ahorro : Decimal(5,2)
+  comparativa_mes_anterior : Decimal(5,2)
+}
+
+entity RecomendacionIA {
+  * recomendacion_id : Integer <<PK>>
+  --
+  * user_id : Integer <<FK>>
+  * fecha_generacion : DateTime
+  * tipo_recomendacion : Varchar(50)
+  * mensaje : Text
+  prioridad : Varchar(20)
+  leida : Boolean
+}
+
+' Relaciones
+Usuario ||--o{ Transaccion : "realiza"
+Usuario ||--o{ MetaAhorro : "define"
+Usuario ||--o{ LimiteGasto : "establece"
+Usuario ||--o{ ReporteFinanciero : "genera"
+Usuario ||--o{ RecomendacionIA : "recibe"
+
+Transaccion }o--|| Categoria : "pertenece a"
+
+Categoria ||--o{ Categoria : "subcategorías"
+
+' Relaciones opcionales
+LimiteGasto }o--|| Categoria : "asociado a"
+Categoria }o--|| Usuario : "crea (personalizadas)"
+
+' Notas adicionales
+note right of Transaccion::comentario
+  Para análisis de IA de gastos
+  innecesarios
+end note
+
+note right of Categoria::predefinida
+  true: categoría del sistema
+  false: categoría personalizada
+end note
+
+note right of MetaAhorro::tipo
+  Semanal/Mensual/Anual/Personalizada
+end note
+
+note right of ReporteFinanciero::comparativa_mes_anterior
+  % de diferencia respecto
+  al mes anterior
+end note
+
+@enduml
