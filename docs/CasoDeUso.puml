@@ -29,6 +29,7 @@ rectangle "Sistema AprendeWallet" {
     }
 
     package "Análisis y Reportes" {
+        (Ver balance) as UC6
         (Ver balance total) as UC6a
         (Ver reporte por categoría) as UC6b
         (Ver balance por meses) as UC6c
@@ -46,6 +47,10 @@ rectangle "Sistema AprendeWallet" {
     UC4b ..> UC4c : <<include>>
     
     UC5a ..> UC5c : <<extend>>
+    
+    UC6a .u.|> UC6 : <<extend>>
+    UC6b .u.|> UC6 : <<extend>>
+    UC6c .u.|> UC6 : <<extend>>
 }
 
 ' Asociaciones actor-UC
@@ -56,9 +61,7 @@ U --> UC4a
 U --> UC4b
 U --> UC5a
 U --> UC5b
-U --> UC6a
-U --> UC6b
-U --> UC6c
+U --> UC6
 U --> UC7a
 U --> UC7b
 
