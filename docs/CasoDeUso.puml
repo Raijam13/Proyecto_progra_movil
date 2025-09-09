@@ -1,5 +1,5 @@
-@startuml casoDeUsoBORRADOR
-title Sistema AprendeWallet - Casos de uso (Versión inicial)
+@startuml
+title Sistema AprendeWallet - Casos de uso
 left to right direction
 skinparam packageStyle rectangle
 skinparam usecase {
@@ -9,36 +9,57 @@ skinparam usecase {
 actor "Usuario" as U
 
 rectangle "Sistema AprendeWallet" {
-  package "Gestión de Cuenta" {
-    (Crear usuario) as UC1
-    (Inicio de sesión) as UC2
-    (Recuperar contraseña) as UC3
-  }
-  package "Movimientos y Control" {
-    (Registro de medio de ingresos de efectivo) as UC4
-    (Mantenimiento de gastos) as UC5
-    (Límite de gasto) as UC9
-  }
-  package "Planeación y Asistencia" {
-    (Crear planes de ahorro) as UC6
-    (Asistente financiero) as UC7
-    (Mostrar gráficos de la tendencia del saldo) as UC8
-  }
 
-  ' Relaciones de inclusión/extensión
-  UC3 .u.|> UC2 : «extend»\nOlvidó credenciales
-  UC7 ..> UC8 : «include»\nUsa analítica
-  UC7 ..> UC9 : «include»\nConsulta límites
+    package "Gestión de Acceso" {
+        (Crear cuenta) as UC1
+        (Iniciar sesión) as UC2
+        (Recuperar contraseña) as UC3
+    }
+
+    package "Gestión de Transacciones" {
+        (Registrar gasto) as UC4a
+        (Registrar ingreso) as UC4b
+        (Categorizar transacción) as UC4c
+    }
+
+    package "Gestión de Metas de Ahorro" {
+        (Establecer meta de ahorro) as UC5a
+        (Seguimiento de metas) as UC5b
+        (Recibir alertas de meta) as UC5c
+    }
+
+    package "Análisis y Reportes" {
+        (Ver balance total) as UC6a
+        (Ver reporte por categoría) as UC6b
+        (Ver balance por meses) as UC6c
+    }
+
+    package "Configuración y Perfil" {
+        (Editar perfil) as UC7a
+        (Cambiar moneda) as UC7b
+    }
+
+    ' Relaciones entre casos de uso
+    UC3 .u.|> UC2 : <<extend>>\nOlvidó credenciales
+    
+    UC4a ..> UC4c : <<include>>
+    UC4b ..> UC4c : <<include>>
+    
+    UC5a ..> UC5c : <<extend>>
 }
 
 ' Asociaciones actor-UC
 U --> UC1
 U --> UC2
 U --> UC3
-U --> UC4
-U --> UC5
-U --> UC6
-U --> UC7
-U --> UC8
-U --> UC9
+U --> UC4a
+U --> UC4b
+U --> UC5a
+U --> UC5b
+U --> UC6a
+U --> UC6b
+U --> UC6c
+U --> UC7a
+U --> UC7b
+
 @enduml
