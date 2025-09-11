@@ -106,6 +106,30 @@ La arquitectura está conformada por un dispositivo Android, donde se ejecuta la
     El sistema puede ser usado en Andorid e iOS sin perder funcionalidades.
 ## Diagramas de caso de uso (Requerimientos funcionales)
 ![alt text](image-1.png)
+### Descipción de casos de uso
+| ID  | Requerimiento                           | Como    | Quiero                                                                 | Para                                                                                       |
+|-----|-----------------------------------------|---------|------------------------------------------------------------------------|-------------------------------------------------------------------------------------------|
+| 1   | Crear usuario                           | Usuario | Crear una cuenta                                                        | Iniciar sesión y poder guardar mi información en mi cuenta                                |
+| 2   | Inicio de sesion (Login)                | Usuario | Ingresar al sistema                                                     | Poder acceder a todas las funcionalidades disponibles dentro del sistema.                 |
+| 3   | Recuperar contraseña                    | Usuario | Poder recuperar mi contraseña                                           | Poder acceder al sistema por si olvido mi contraseña                                      |
+| 4   | Registro de medio de ingresos de efectivo | Usuario | Crear mis medios de ingresos como efectivo o tarjeta                   | Poder gestionar mi ingreso y salida de efectivo en mi cuenta                              |
+| 5   | Mantenimiento de gastos                 | Usuario | Hacer mantenimiento a los registros de mis gastos que realice a lo largo del tiempo | Tener control sobre los posibles errores al registrar mis gastos o revisar al detalle mis gastos |
+| 6   | Crear planes de ahorro                  | Usuario | Crear planes de ahorro donde defina una meta de ahorro y un plazo para lograrlo | Mis metas personales financieras                                                          |
+| 7   | Asistente financiero                    | Usuario | Tener un asistente financiero con funcionalidades definidas que pueda darme recomendaciones financieras en base a mis gastos, me de tips de educación financiera | Recibir un asesoramiento financiero apropiado acorde a mi realidad                        |
+| 8   | Mostrar gráficos de la tendencia del saldo | Usuario | Quiero analizar los ingresos y gastos que realizo mostrando las tendencias de mis gastos con gráficos | Visualizar de mejor manera y entender como ha estado funcionando los gastos dentro de un periodo de tiempo |
+| 9   | Límite de gasto                         | Usuario | Definir un límite de gasto semanal, mensual o anual asociado a mi perfil personal | Tener un control sobre lo que espero gastar en esos periodos de tiempo                    |
+| 10  | Registrar un gasto                      | Usuario | Registrar manualmente mis gastos                                        | Mantener un registro de mis transacciones.                                                |
+| 11  | Registrar un ingreso                    | Usuario | Registrar manualmente mis ingresos                                      | Tener control completo de mi flujo de dinero                                              |
+| 12  | Categorizar transacciones               | Usuario | Asignar categorías a mis gastos e ingresos                              | Analizarlos mejor                                                                         |
+| 13  | Establecer metas de ahorro              | Usuario | Crear metas de ahorro con un monto y fecha límite                       | Organizar mis finanzas personales                                                         |
+| 14  | Recibir alertas de metas                | Usuario | Recibir notificaciones de acuerdo al progreso de mis metas de ahorro    | Mantenerme al tanto                                                                       |
+| 15  | Seguimiento de metas de ahorro          | Usuario | Ver el progreso de mis planes de ahorro                                 | Mantenerme motivado y alcanzar mis objetivos                                              |
+| 16  | Ver balance total                       | Usuario | Ver un resumen de mi balance total de dinero                            | Tener conocimiento de mis ingresos y gastos mensuales                                     |
+| 17  | Ver un reporte de gastos por categoría  | Usuario | Ver el porcentaje de mis gastos según la categoría                      | Saber en qué cosas gasto más                                                              |
+| 18  | Ver balance por meses                   | Usuario | Ver el balance de cada mes                                              | Comparar mi rendimiento mensual                                                           |
+| 19  | Editar perfil de usuario                | Usuario | Editar mi información personal                                          | Personalizar mi perfil                                                                    |
+| 20  | Cambiar moneda                          | Usuario | Cambiar la moneda en la que se muestran mis finanzas                    | Adaptarla según mis necesidades                                                           |
+
 ## Descripción de casos de uso (incluye mockups)
 
 
