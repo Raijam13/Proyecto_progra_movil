@@ -138,3 +138,6 @@ La arquitectura está conformada por un dispositivo Android, donde se ejecuta la
 ![](docs/img/Mockups/mockup3.png)
 ![](docs/img/Mockups/mockup4.png)
 ![](docs/img/Mockups/mockup5.png)
+
+## Diagrama de base de datos
+![](docs/img/Diagrama_bd.png)
