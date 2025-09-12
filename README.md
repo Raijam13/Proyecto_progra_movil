@@ -132,6 +132,8 @@ La arquitectura está conformada por un dispositivo Android, donde se ejecuta la
 
 ## Descripción de casos de uso (incluye mockups)
 
+Link del figma: https://www.figma.com/design/ZNeflkiIxjQOrTCRmVXfId/Flutter-app---AprendeWallet?node-id=0-1&t=UKAhWFaEcuVQhPK8-1
+Contraseña: progmovil
 
 ![](docs/img/Mockups/mockup1.png)
 ![](docs/img/Mockups/mockup2.png)
