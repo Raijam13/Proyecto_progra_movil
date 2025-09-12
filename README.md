@@ -106,7 +106,7 @@ La arquitectura está conformada por un dispositivo Android, donde se ejecuta la
     El sistema puede ser usado en Andorid e iOS sin perder funcionalidades.
 ## Diagramas de caso de uso (Requerimientos funcionales)
 ![alt text](image-1.png)
-### Descipción de casos de uso
+### Descipción de historias de usuario
 | ID  | Requerimiento                           | Como    | Quiero                                                                 | Para                                                                                       |
 |-----|-----------------------------------------|---------|------------------------------------------------------------------------|-------------------------------------------------------------------------------------------|
 | 1   | Crear usuario                           | Usuario | Crear una cuenta                                                        | Iniciar sesión y poder guardar mi información en mi cuenta                                |
