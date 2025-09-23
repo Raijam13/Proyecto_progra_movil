@@ -1,5 +1,7 @@
 import 'package:aprende_wallet_app/configs/theme.dart';
+import 'package:aprende_wallet_app/pages/log_in/bienvenida_page.dart';
 import 'package:aprende_wallet_app/pages/log_in/log_in_page.dart';
+import 'package:aprende_wallet_app/pages/splash/splash_page.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -24,7 +26,12 @@ class MainApp extends StatelessWidget {
       highContrastTheme: mt.lightHighContrast(),
       highContrastDarkTheme: mt.darkHighContrast(),
       
-      home: LogInPage()
+      initialRoute: '/',
+      routes: {
+        '/': (context) => const SplashPage(),
+        '/bienvenida': (context) => const BienvenidaPage(),
+        '/login': (context) => const LogInPage()
+      },
     );
   }
 }

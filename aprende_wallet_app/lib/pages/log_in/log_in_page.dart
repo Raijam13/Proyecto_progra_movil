@@ -20,8 +20,10 @@ class LogInPage extends StatelessWidget {
         
           children: [
             title(context),
+            Divider(),
             log_in_form(context),
-            no_account_button(context)
+            no_account_button(context),
+            
           ],
         ),
       ),
@@ -31,7 +33,7 @@ class LogInPage extends StatelessWidget {
   Column title(BuildContext context) {
     return Column(
             children: [
-              Image.asset('assets/images/logo.png'),
+              Image.asset('assets/images/Logo.png'),
               Text('AprendeWallet', style: Theme.of(context).textTheme.headlineMedium),
               Text(
                 'Inicio Sesión',
