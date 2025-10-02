@@ -9,7 +9,7 @@ class SplashPage extends StatelessWidget {
       backgroundColor: Theme.of(context).colorScheme.surface,
       body: GestureDetector(
         onTap: () {
-          Navigator.pushReplacementNamed(context, '/bienvenida');
+          Navigator.pushReplacementNamed(context, '/login'); // ← Cambiado de '/bienvenida' a '/login'
         },
         child: Center(
           child: Column(
