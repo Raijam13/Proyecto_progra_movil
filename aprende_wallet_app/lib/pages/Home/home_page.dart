@@ -171,7 +171,7 @@ class HomePage extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
 
     return GestureDetector(
-      onTap: () => control.addAccount(),
+      onTap: () => control.addAccount(context),
       child: Container(
         width: 150,
         margin: const EdgeInsets.only(right: 12),

@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class HomeController extends GetxController {
@@ -49,9 +50,9 @@ class HomeController extends GetxController {
   }
 
   // Método para agregar una nueva cuenta
-  void addAccount() {
+  void addAccount(BuildContext context) {
     // Por ahora solo un print, más adelante navegará a crear cuenta
-    print('Agregar nueva cuenta');
+    Navigator.pushNamed(context, '/crear-cuenta');
   }
 
   // Método para mostrar más gastos principales

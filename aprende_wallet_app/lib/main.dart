@@ -3,6 +3,8 @@ import 'pages/sign_in/sign_in_page.dart';
 import 'package:aprende_wallet_app/pages/log_inNO/sign_up.dart';
 import 'package:aprende_wallet_app/pages/splash/splash_page.dart';
 import 'package:aprende_wallet_app/pages/log_inNO/bienvenida_page.dart';
+import 'package:aprende_wallet_app/pages/Home/home_page.dart';
+import 'package:aprende_wallet_app/pages/Crear_cuenta/Crear_cuenta_page.dart';
 
 import 'package:flutter/material.dart';
 
@@ -29,12 +31,14 @@ class MainApp extends StatelessWidget {
       highContrastTheme: mt.lightHighContrast(),
       highContrastDarkTheme: mt.darkHighContrast(),
       
-      initialRoute: '/',
+      initialRoute: '/', 
       routes: {
         '/': (context) => const SplashPage(),
         '/bienvenida': (context) => const BienvenidaPage(),
-        '/login': (context) =>  SignInPage(),
-        '/signup': (context) =>  SignUpPage(), // ← Agrega esta línea
+        '/login': (context) => SignInPage(),
+        '/signup': (context) => SignUpPage(),
+        '/home': (context) => HomePage(),
+        '/crear-cuenta': (context) => CrearCuentaPage(), 
       },
     );
   }
