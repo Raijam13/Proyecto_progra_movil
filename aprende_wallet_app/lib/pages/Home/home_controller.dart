@@ -44,9 +44,12 @@ class HomeController extends GetxController {
   ].obs;
 
   // Método para cambiar el índice del nav bar
-  void changeNavIndex(int index) {
+  void changeNavIndex(int index, BuildContext context) {
     currentNavIndex.value = index;
-    // Aquí más adelante agregaremos la navegación
+    // Navegación al presionar el botón central (+)
+    if (index == 2) {
+      Navigator.pushNamed(context, '/agregar-registro');
+    }
   }
 
   // Método para agregar una nueva cuenta

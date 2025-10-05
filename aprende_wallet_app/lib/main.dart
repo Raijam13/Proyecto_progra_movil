@@ -6,6 +6,7 @@ import 'package:aprende_wallet_app/pages/log_inNO/bienvenida_page.dart';
 import 'package:aprende_wallet_app/pages/Home/home_page.dart';
 import 'package:aprende_wallet_app/pages/Crear_cuenta/Crear_cuenta_page.dart';
 import 'package:aprende_wallet_app/pages/Perfil/perfil_page.dart';
+import 'package:aprende_wallet_app/pages/Agregar_Registro/agregar_registro_page.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -41,7 +42,7 @@ class MainApp extends StatelessWidget {
         Locale('en'), // Inglés
       ],
 
-      initialRoute: '/perfil',
+      initialRoute: '/home',
       routes: {
         '/': (context) => const SplashPage(),
         '/bienvenida': (context) => const BienvenidaPage(),
@@ -50,6 +51,7 @@ class MainApp extends StatelessWidget {
         '/home': (context) => HomePage(),
         '/crear-cuenta': (context) => CrearCuentaPage(),
         '/perfil': (context) => PerfilPage(),
+        '/agregar-registro': (context) => AgregarRegistroPage(),
       },
     );
   }

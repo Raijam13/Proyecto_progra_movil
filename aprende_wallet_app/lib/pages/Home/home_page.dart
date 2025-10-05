@@ -40,7 +40,7 @@ class HomePage extends StatelessWidget {
       bottomNavigationBar: Obx(
         () => CustomBottomNavBar(
           currentIndex: control.currentNavIndex.value,
-          onTap: (index) => control.changeNavIndex(index),
+          onTap: (index) => control.changeNavIndex(index, context),
         ),
       ),
     );
