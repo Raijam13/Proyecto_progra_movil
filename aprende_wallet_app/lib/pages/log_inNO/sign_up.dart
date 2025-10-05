@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
-
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 /*import 'sign_up_controller.dart'; */
 class SignUpPage extends StatelessWidget {
  /* final SignUpController control = Get.put(SignUpController()); */
 
-   SignUpPage({super.key});
+   const SignUpPage({super.key});
 
   Widget _background(BuildContext context) {
     return Container(
