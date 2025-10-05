@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import '../Home/home_controller.dart';
 
 class AgregarRegistroController extends GetxController {
   RxString tipo = 'Gasto'.obs; // 'Gasto' o 'Ingreso'
@@ -30,7 +31,25 @@ class AgregarRegistroController extends GetxController {
   }
 
   void guardarRegistro() {
-    // Aquí se implementará la lógica para guardar el registro
-    print('Registro guardado');
+    // Obtén el HomeController
+    final homeController = Get.find<HomeController>();
+    // Determina el color y tipo
+    final isIngreso = tipo.value == 'Ingreso';
+    final color = isIngreso ? 0xFF43A047 : 0xFFEF5350; // Verde o rojo
+    homeController.agregarTransaccion(
+      title: categoria.value.isNotEmpty ? categoria.value : 'Sin categoría',
+      subtitle: cuenta.value.isNotEmpty ? cuenta.value : 'Sin cuenta',
+      amount: isIngreso ? monto.value : -monto.value,
+      date: fechaHora.value,
+      type: isIngreso ? 'income' : 'expense',
+      color: color,
+    );
+  // Limpia los valores tras guardar
+    tipo.value = 'Gasto';
+    moneda.value = 'PEN';
+    cuenta.value = '';
+    categoria.value = '';
+    fechaHora.value = DateTime.now();
+    monto.value = 0.0;
   }
 }

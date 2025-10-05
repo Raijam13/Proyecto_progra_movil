@@ -1,6 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'agregar_registro_controller.dart';
+import 'registro_modals/seleccionar_fecha_y_hora.dart';
+import 'registro_modals/seleccionar_cuenta.dart';
+import 'registro_modals/seleccionar_categoria.dart';
+
+// Formatea la fecha y hora para mostrar en la UI tipo "hoy, 10:09 a. m."
+String _formatFechaHora(DateTime dateTime, BuildContext context) {
+  final now = DateTime.now();
+  final isToday = dateTime.year == now.year && dateTime.month == now.month && dateTime.day == now.day;
+  final dateLabel = isToday
+      ? 'hoy'
+      : MaterialLocalizations.of(context).formatShortMonthDay(dateTime);
+  final time = TimeOfDay.fromDateTime(dateTime).format(context);
+  return '$dateLabel, $time';
+}
 
 class AgregarRegistroPage extends StatelessWidget {
   AgregarRegistroPage({super.key});
@@ -25,7 +39,15 @@ class AgregarRegistroPage extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         TextButton(
-                          onPressed: () => Navigator.pop(context),
+                          onPressed: () {
+                            control.tipo.value = 'Gasto';
+                            control.moneda.value = 'PEN';
+                            control.monto.value = 0.0;
+                            control.cuenta.value = '';
+                            control.categoria.value = '';
+                            control.fechaHora.value = DateTime.now();
+                            Navigator.pop(context);
+                          },
                           child: const Text('Cancelar', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                         ),
                         const Text('Agregar registro', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18)),
@@ -172,21 +194,45 @@ class AgregarRegistroPage extends StatelessWidget {
           label: 'Cuenta',
           value: control.cuenta.value.isEmpty ? 'Requerido' : control.cuenta.value,
           valueColor: control.cuenta.value.isEmpty ? Colors.red : Colors.black,
-          onTap: () {},
-        ),
+          onTap: () async {
+            await SeleccionarCuentaModal.show(
+              context: context,
+              initialCuenta: control.cuenta.value,
+              onSelect: (cuenta) {
+                control.setCuenta(cuenta);
+              },
+            );
+          },
+  ),
         _buildGeneralItem(
           icon: Icons.category_outlined,
           label: 'Categoría',
           value: control.categoria.value.isEmpty ? 'Requerido' : control.categoria.value,
           valueColor: control.categoria.value.isEmpty ? Colors.red : Colors.black,
-          onTap: () {},
+          onTap: () async {
+            await SeleccionarCategoriaModal.show(
+              context: context,
+              initialCategoria: control.categoria.value,
+              onSelect: (categoria) {
+                control.setCategoria(categoria);
+              },
+            );
+          },
         ),
         _buildGeneralItem(
           icon: Icons.calendar_today_outlined,
           label: 'Fecha y hora',
-          value: 'hoy, ${TimeOfDay.now().format(context)}',
+          value: _formatFechaHora(control.fechaHora.value, context),
           valueColor: Colors.black,
-          onTap: () {},
+          onTap: () async {
+            await SeleccionarFechaYHoraModal.show(
+              context: context,
+              initialDate: control.fechaHora.value,
+              onSelect: (dateTime) {
+                control.setFechaHora(dateTime);
+              },
+            );
+          },
         ),
       ],
     );
@@ -233,13 +279,14 @@ class AgregarRegistroPage extends StatelessWidget {
   }
 
   Widget _buildGuardarButton(BuildContext context) {
+    final isEnabled = control.cuenta.value.isNotEmpty && control.categoria.value.isNotEmpty && control.monto.value > 0;
     return Container(
       width: double.infinity,
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       child: ElevatedButton(
-        onPressed: null, // Deshabilitado por ahora
+        onPressed: isEnabled ? () => control.guardarRegistro() : null,
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.grey[300],
+          backgroundColor: isEnabled ? Colors.blue : Colors.grey[300],
           foregroundColor: Colors.white,
           padding: const EdgeInsets.symmetric(vertical: 16),
           shape: RoundedRectangleBorder(

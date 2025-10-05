@@ -4,7 +4,7 @@ import 'package:aprende_wallet_app/components/navBar.dart';
 import 'home_controller.dart';
 
 class HomePage extends StatelessWidget {
-  final HomeController control = Get.put(HomeController());
+  final HomeController control = Get.put(HomeController(), permanent: true);
 
   HomePage({super.key});
 
@@ -317,29 +317,44 @@ class HomePage extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Obx(
-            () => ListView.separated(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: control.transactions.length,
-              separatorBuilder: (context, index) => const SizedBox(height: 12),
-              itemBuilder: (context, index) {
-                return _buildTransactionItem(context, control.transactions[index]);
-              },
-            ),
+            () {
+              final mostrarTodos = control.mostrarTodosRegistros.value;
+              final total = control.transactions.length;
+              final mostrar = mostrarTodos ? total : (total > 3 ? 3 : total);
+              final transaccionesOrdenadas = List<Map<String, dynamic>>.from(control.transactions);
+              transaccionesOrdenadas.sort((a, b) {
+                final dateA = a['dateTime'] as DateTime? ?? DateTime(1900);
+                final dateB = b['dateTime'] as DateTime? ?? DateTime(1900);
+                return dateB.compareTo(dateA);
+              });
+              return ListView.separated(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: mostrar,
+                separatorBuilder: (context, index) => const SizedBox(height: 12),
+                itemBuilder: (context, index) {
+                  return _buildTransactionItem(context, transaccionesOrdenadas[index]);
+                },
+              );
+            },
           ),
           const SizedBox(height: 16),
           Align(
             alignment: Alignment.centerRight,
-            child: TextButton(
-              onPressed: () => control.showMoreTransactions(),
-              child: Text(
-                'Mostrar más',
-                style: TextStyle(
-                  color: colorScheme.primary,
-                  fontWeight: FontWeight.w600,
+            child: Obx(() {
+              final total = control.transactions.length;
+              if (total <= 3) return const SizedBox.shrink();
+              return TextButton(
+                onPressed: () => control.showMoreTransactions(),
+                child: Text(
+                  control.mostrarTodosRegistros.value ? 'Mostrar menos' : 'Mostrar más',
+                  style: TextStyle(
+                    color: colorScheme.primary,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
-              ),
-            ),
+              );
+            }),
           ),
         ],
       ),
@@ -373,13 +388,6 @@ class HomePage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                transaction['title'],
-                style: const TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
               const SizedBox(height: 2),
               Text(
                 transaction['subtitle'],

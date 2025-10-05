@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class HomeController extends GetxController {
+  // Controla si se muestra la lista completa de registros
+  RxBool mostrarTodosRegistros = false.obs;
   // Índice activo del bottom nav bar
   RxInt currentNavIndex = 0.obs;
 
@@ -15,33 +17,44 @@ class HomeController extends GetxController {
     },
   ].obs;
 
-  // Lista de transacciones (hardcodeado por ahora)
-  RxList<Map<String, dynamic>> transactions = <Map<String, dynamic>>[
-    {
-      'title': 'Ingreso',
-      'subtitle': 'Efectivo',
-      'amount': 100.00,
-      'date': '27 de agosto',
-      'type': 'income', // income o expense
-      'color': 0xFFFFA726, // Naranja
-    },
-    {
-      'title': 'Restaurante, comida rápida',
-      'subtitle': 'Efectivo',
-      'amount': -23.00,
-      'date': '26 de agosto',
-      'type': 'expense',
-      'color': 0xFFEF5350, // Rojo
-    },
-    {
-      'title': 'Restaurante, comida rápida',
-      'subtitle': 'Efectivo',
-      'amount': 3.00,
-      'date': '26 de agosto',
-      'type': 'income',
-      'color': 0xFFEF5350, // Rojo
-    },
-  ].obs;
+  // Lista de transacciones (ahora vacía, se llenará al guardar)
+  RxList<Map<String, dynamic>> transactions = <Map<String, dynamic>>[].obs;
+
+  // Método para agregar un registro desde AgregarRegistroController
+  void agregarTransaccion({
+    required String title,
+    required String subtitle,
+    required double amount,
+    required DateTime date,
+    required String type,
+    required int color,
+  }) {
+    transactions.insert(0, {
+      'title': title,
+      'subtitle': subtitle,
+      'amount': amount,
+      'date': _formatDate(date),
+      'type': type,
+      'color': color,
+    });
+  }
+
+  String _formatDate(DateTime date) {
+    final now = DateTime.now();
+    if (date.year == now.year && date.month == now.month && date.day == now.day) {
+      return 'hoy';
+    }
+    // Ejemplo: 5 de octubre
+    return '${date.day} de ${_nombreMes(date.month)}';
+  }
+
+  String _nombreMes(int mes) {
+    const nombres = [
+      '', 'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
+      'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'
+    ];
+    return nombres[mes];
+  }
 
   // Método para cambiar el índice del nav bar
   void changeNavIndex(int index, BuildContext context) {
@@ -65,7 +78,7 @@ class HomeController extends GetxController {
 
   // Método para mostrar más transacciones
   void showMoreTransactions() {
-    print('Mostrar más transacciones');
+  mostrarTodosRegistros.value = !mostrarTodosRegistros.value;
   }
 
   // Método para abrir menú de gastos principales
