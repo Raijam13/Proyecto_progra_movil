@@ -24,7 +24,7 @@ class PerfilPage extends StatelessWidget {
           ),
         ),
         title: Text(
-          'Más',
+          'Home',
           style: TextStyle(
             color: colorScheme.primary,
             fontSize: 16,
