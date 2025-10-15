@@ -64,6 +64,9 @@ class HomeController extends GetxController {
       Navigator.pushReplacementNamed(context, '/home');
     }
 
+    if (index == 1) {
+      Navigator.pushReplacementNamed(context, '/planificacion');
+    } 
     // Navegación al presionar el botón central (+)
     if (index == 2) {
       Navigator.pushNamed(context, '/agregar-registro');
