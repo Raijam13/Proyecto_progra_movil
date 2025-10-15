@@ -8,6 +8,9 @@ import 'package:aprende_wallet_app/pages/Crear_cuenta/Crear_cuenta_page.dart';
 import 'package:aprende_wallet_app/pages/Perfil/perfil_page.dart';
 import 'package:aprende_wallet_app/pages/Agregar_Registro/agregar_registro_page.dart';
 import 'package:aprende_wallet_app/pages/ChatIA/page_chat.dart';
+import 'package:aprende_wallet_app/pages/Planificacion/planificacion_page.dart';
+import 'package:aprende_wallet_app/pages/planificacion/pagos_planificados_page.dart';
+import 'package:aprende_wallet_app/pages/Planificacion/presupuestos_page.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -54,6 +57,9 @@ class MainApp extends StatelessWidget {
         '/perfil': (context) => PerfilPage(),
         '/agregar-registro': (context) => AgregarRegistroPage(),
         '/chat-ia': (context) => ChatPage(),
+        '/planificacion': (context) => PlanificacionPage(),
+        '/pagosplanificados': (context) => PagosPlanificadosPage(),
+        '/presupuestos': (context) => PresupuestosPage(),
       },
     );
   }
