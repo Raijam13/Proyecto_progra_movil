@@ -59,9 +59,22 @@ class HomeController extends GetxController {
   // Método para cambiar el índice del nav bar
   void changeNavIndex(int index, BuildContext context) {
     currentNavIndex.value = index;
+
+    if (index == 0) {
+      Navigator.pushReplacementNamed(context, '/home');
+    }
+
     // Navegación al presionar el botón central (+)
     if (index == 2) {
       Navigator.pushNamed(context, '/agregar-registro');
+    }
+
+    if (index == 3){
+      Navigator.pushReplacementNamed(context, '/chat-ia');
+      return;
+    }
+    if (index == 4) {
+      Navigator.pushNamed(context, '/perfil');
     }
   }
 

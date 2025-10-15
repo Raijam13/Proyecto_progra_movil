@@ -69,13 +69,6 @@ class HomePage extends StatelessWidget {
                 IconButton(
                   onPressed: () {},
                   icon: Icon(
-                    Icons.notifications_outlined,
-                    color: colorScheme.onPrimary,
-                  ),
-                ),
-                IconButton(
-                  onPressed: () {},
-                  icon: Icon(
                     Icons.settings_outlined,
                     color: colorScheme.onPrimary,
                   ),

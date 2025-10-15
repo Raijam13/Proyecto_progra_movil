@@ -17,7 +17,8 @@ class PerfilController extends GetxController {
 
   // Método para volver atrás
   void goBack(BuildContext context) {
-    Navigator.pop(context);
+    // Navega al home y limpia la pila
+    Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
   }
 
   // Método para editar foto
