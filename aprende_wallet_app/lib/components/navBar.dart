@@ -44,14 +44,14 @@ class CustomBottomNavBar extends StatelessWidget {
           _buildCentralButton(context),
           _buildNavItem(
             context,
-            icon: Icons.bar_chart_outlined,
-            label: 'Estadísticas',
+            icon: Icons.chat_bubble_outline,
+            label: 'Chat-IA',
             index: 3,
           ),
           _buildNavItem(
             context,
-            icon: Icons.more_horiz,
-            label: 'Más',
+            icon: Icons.person_outline,
+            label: 'Perfil',
             index: 4,
           ),
         ],
