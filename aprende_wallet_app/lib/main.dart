@@ -29,7 +29,7 @@ class MainApp extends StatelessWidget {
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      themeMode: ThemeMode.system,
+      themeMode: ThemeMode.light, // Forzar el modo claro para testear
       theme: mt.light(),
       darkTheme: mt.dark(),
       highContrastTheme: mt.lightHighContrast(),
