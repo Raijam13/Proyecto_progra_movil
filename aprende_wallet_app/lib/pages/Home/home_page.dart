@@ -60,26 +60,12 @@ class HomePage extends StatelessWidget {
       ),
       child: Column(
         children: [
-          // AppBar con íconos
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                IconButton(
-                  onPressed: () {},
-                  icon: Icon(
-                    Icons.settings_outlined,
-                    color: colorScheme.onPrimary,
-                  ),
-                ),
-              ],
-            ),
-          ),
-
+          // AppBar eliminado (se quitó el Padding con el botón de configuración)
+          
           // Cards de cuentas
+          // Se agrega padding superior para dejar espacio desde la parte superior
           Padding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
+            padding: const EdgeInsets.fromLTRB(16, 30, 16, 20),
             child: Obx(
               () => SizedBox(
                 height: 140,
