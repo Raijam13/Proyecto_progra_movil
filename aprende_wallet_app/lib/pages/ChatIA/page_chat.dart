@@ -16,33 +16,28 @@ class ChatPage extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: colorScheme.surface,
-      //App bar -> IA Wallet
+      // App bar -> IA Wallet
       appBar: AppBar(
         elevation: 0,
         backgroundColor: colorScheme.primaryContainer.withOpacity(0.1),
-        automaticallyImplyLeading: true, // mantiene la flecha si existe
-        title: Stack(
-          alignment: const Alignment(0, 0),
+        automaticallyImplyLeading: true,
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                CircleAvatar(
-                  radius: 18,
-                  backgroundColor: colorScheme.primary,
-                  child: Icon(Icons.smart_toy,
-                      color: colorScheme.onPrimary, size: 20),
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  'IA Wallet',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                    color: colorScheme.onSurface,
-                  ),
-                ),
-              ],
+            CircleAvatar(
+              radius: 18,
+              backgroundColor: colorScheme.primary,
+              child: Icon(Icons.smart_toy,
+                  color: colorScheme.onPrimary, size: 20),
+            ),
+            const SizedBox(width: 8),
+            Text(
+              'IA Wallet',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+                color: colorScheme.onSurface,
+              ),
             ),
           ],
         ),
@@ -50,16 +45,17 @@ class ChatPage extends StatelessWidget {
 
       body: Column(
         children: [
-          //Lista de mensajes
+          // Lista de mensajes
           Expanded(
             child: Obx(() => ListView.builder(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  reverse: true, // muestra mensajes nuevos al final
+                  reverse: true, // muestra los mensajes nuevos al final
                   itemCount: control.messages.length,
                   itemBuilder: (context, index) {
                     final msg = control.messages.reversed.toList()[index];
                     final isUser = msg['sender'] == 'user';
+
                     return Align(
                       alignment: isUser
                           ? Alignment.centerRight
@@ -87,15 +83,33 @@ class ChatPage extends StatelessWidget {
                             ),
                           ],
                         ),
-                        child: Text(
-                          msg['text'],
-                          style: TextStyle(
-                            fontSize: 15,
-                            height: 1.4,
-                            color: isUser
-                                ? colorScheme.onPrimary
-                                : colorScheme.onSurface,
-                          ),
+                        child: Column(
+                          crossAxisAlignment: isUser
+                              ? CrossAxisAlignment.end
+                              : CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              msg['text'],
+                              style: TextStyle(
+                                fontSize: 15,
+                                height: 1.4,
+                                color: isUser
+                                    ? colorScheme.onPrimary
+                                    : colorScheme.onSurface,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            // ⏰ Hora del mensaje
+                            Text(
+                              msg['time'] ?? '',
+                              style: TextStyle(
+                                fontSize: 11,
+                                color: isUser
+                                    ? colorScheme.onPrimary.withOpacity(0.8)
+                                    : Colors.grey[600],
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     );
@@ -109,8 +123,7 @@ class ChatPage extends StatelessWidget {
       ),
 
       // Mantiene la barra inferior
-      bottomNavigationBar: 
-      Obx(
+      bottomNavigationBar: Obx(
         () => CustomBottomNavBar(
           currentIndex: homeControl.currentNavIndex.value,
           onTap: (index) => homeControl.changeNavIndex(index, context),
@@ -149,7 +162,7 @@ class ChatPage extends StatelessWidget {
           crossAxisCount: 2, // hace los botones del mismo tamaño
           crossAxisSpacing: 8,
           mainAxisSpacing: 8,
-          childAspectRatio: 3.5, // proporción rectangular
+          childAspectRatio: 3.5,
         ),
         itemBuilder: (context, index) {
           final text = options[index];
