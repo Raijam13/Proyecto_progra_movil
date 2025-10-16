@@ -3,8 +3,11 @@ import 'package:get/get.dart';
 import 'page_chat_controller.dart';
 import 'package:aprende_wallet_app/components/navBar.dart';
 import 'package:aprende_wallet_app/pages/Home/home_controller.dart';
+import 'package:aprende_wallet_app/pages/Services/chat_service.dart'; 
 
 class ChatPage extends StatelessWidget {
+  // registrar servicio antes que el controller (importante: ChatController usa Get.find<ChatService>())
+  final ChatService chatService = Get.put(ChatService());
   final ChatController control = Get.put(ChatController());
   final HomeController homeControl = Get.find<HomeController>();
 
@@ -53,6 +56,7 @@ class ChatPage extends StatelessWidget {
                   reverse: true, // muestra los mensajes nuevos al final
                   itemCount: control.messages.length,
                   itemBuilder: (context, index) {
+                    // construimos la lista invertida para mostrar los más recientes abajo
                     final msg = control.messages.reversed.toList()[index];
                     final isUser = msg['sender'] == 'user';
 
@@ -89,7 +93,7 @@ class ChatPage extends StatelessWidget {
                               : CrossAxisAlignment.start,
                           children: [
                             Text(
-                              msg['text'],
+                              msg['text'] ?? '',
                               style: TextStyle(
                                 fontSize: 15,
                                 height: 1.4,

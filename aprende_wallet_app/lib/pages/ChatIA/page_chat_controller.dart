@@ -1,27 +1,24 @@
-import 'dart:convert';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:aprende_wallet_app/pages/Services/chat_service.dart';
 
 class ChatController extends GetxController {
+  final ChatService chatService = Get.find<ChatService>();
+
   RxList<Map<String, dynamic>> messages = <Map<String, dynamic>>[].obs;
-  List<Map<String, dynamic>> respuestas = [];
 
   @override
   void onInit() {
     super.onInit();
-    _loadResponses();
+    _initService();
   }
 
-  /// Carga las respuestas desde el archivo JSON
-  Future<void> _loadResponses() async {
-    final String jsonString =
-        await rootBundle.loadString('assets/data/chat_responses.json');
-    final Map<String, dynamic> data = json.decode(jsonString);
-    respuestas = List<Map<String, dynamic>>.from(data['respuestas']);
+  Future<void> _initService() async {
+    // Asegurarse de cargar las respuestas antes de usarlas
+    await chatService.loadResponses();
   }
 
-  /// Envía mensaje del usuario con hora
+  /// Envía mensaje del usuario (añade con hora) y solicita respuesta del servicio
   void sendMessage(String text) {
     final horaActual = DateFormat('HH:mm').format(DateTime.now());
 
@@ -31,32 +28,17 @@ class ChatController extends GetxController {
       'time': horaActual,
     });
 
-    _simulateResponse(text);
+    _sendAndReceive(text);
   }
 
-  /// Simula respuesta usando coincidencia con el JSON
-  void _simulateResponse(String userText) async {
-    await Future.delayed(const Duration(seconds: 1));
-
+  Future<void> _sendAndReceive(String userText) async {
+    final response = await chatService.getResponse(userText);
     final horaActual = DateFormat('HH:mm').format(DateTime.now());
-    String response = _buscarRespuesta(userText.toLowerCase());
 
     messages.add({
       'text': response,
       'sender': 'bot',
       'time': horaActual,
     });
-  }
-
-  /// Busca coincidencias en las palabras clave del JSON
-  String _buscarRespuesta(String textoUsuario) {
-    for (var item in respuestas) {
-      for (var palabra in item['keywords']) {
-        if (textoUsuario.contains(palabra.toLowerCase())) {
-          return item['respuesta'];
-        }
-      }
-    }
-    return 'No tengo información específica sobre eso, pero puedo ayudarte a analizar tus finanzas.';
   }
 }
