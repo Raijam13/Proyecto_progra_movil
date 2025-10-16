@@ -1,0 +1,20 @@
+{
+  "respuestas": [
+    {
+      "keywords": ["gastos", "presupuesto", "finanzas"],
+      "respuesta": "He revisado tus movimientos: llevas gastado el 78% de tu presupuesto mensual."
+    },
+    {
+      "keywords": ["categoría", "comida", "transporte"],
+      "respuesta": "La categoría con más consumo fue Comida a domicilio (35%), seguida de Transporte (20%)."
+    },
+    {
+      "keywords": ["pasado", "mes anterior"],
+      "respuesta": "Sí, este mes has gastado un 10% más que el mes anterior."
+    },
+    {
+      "keywords": ["ahorro", "ahorrar", "recomendación"],
+      "respuesta": "Podrías mejorar tus finanzas reduciendo gastos innecesarios y ahorrando un 15% de tus ingresos."
+    }
+  ]
+}
