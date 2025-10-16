@@ -13,8 +13,8 @@
       "respuesta": "Sí, este mes has gastado un 10% más que el mes anterior."
     },
     {
-      "keywords": ["ahorro", "ahorrar", "recomendación"],
-      "respuesta": "Podrías mejorar tus finanzas reduciendo gastos innecesarios y ahorrando un 15% de tus ingresos."
+      "keywords": ["mejorar", "finanzas personales", "consejos"],
+      "respuesta": "Reduce gastos no esenciales y ahorra 10%."
     }
   ]
 }
