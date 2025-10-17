@@ -13,6 +13,7 @@ import 'package:aprende_wallet_app/pages/ChatIA/page_chat.dart';
 import 'package:aprende_wallet_app/pages/Planificacion/planificacion_page.dart';
 import 'package:aprende_wallet_app/pages/Planificacion/pagos_planificados/splash_pagos_planificados_page.dart';
 import 'package:aprende_wallet_app/pages/Planificacion/presupuestos/splash_presupuestos_page.dart';
+import 'package:aprende_wallet_app/pages/Historial_Gastos/historial_gasto_page.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -50,22 +51,21 @@ class MainApp extends StatelessWidget {
       ],
 
       initialRoute: '/home',
-      getPages: [
-        GetPage(name: '/', page: () => const SplashPage()),
-        GetPage(name: '/bienvenida', page: () => const BienvenidaPage()),
-        GetPage(name: '/login', page: () => SignInPage()),
-        GetPage(name: '/signup', page: () => SignUpPage()),
-        GetPage(name: '/home', page: () => HomePage()),
-        GetPage(name: '/crear-cuenta', page: () => CrearCuentaPage()),
-        GetPage(name: '/perfil', page: () => PerfilPage()),
-        GetPage(name: '/agregar-registro', page: () => AgregarRegistroPage()),
-        GetPage(name: '/chat-ia', page: () => ChatPage()),
-        GetPage(name: '/planificacion', page: () => PlanificacionPage()),
-        GetPage(name: '/splash_pagosplanificados', page: () => const SplashPagosPlanificadosPage()),
-        GetPage(name: '/splash_presupuestos', page: () => const SplashPresupuestosPage()),
-        GetPage(name: '/presupuestos', page: () => const PresupuestosPage()),
-        GetPage(name: '/pagosplanificados', page: () => const PagosPlanificadosPage()),
-      ],
+      routes: {
+        '/': (context) => const SplashPage(),
+        '/bienvenida': (context) => const BienvenidaPage(),
+        '/login': (context) => SignInPage(),
+        '/signup': (context) => SignUpPage(),
+        '/home': (context) => HomePage(),
+        '/crear-cuenta': (context) => CrearCuentaPage(),
+        '/perfil': (context) => PerfilPage(),
+        '/agregar-registro': (context) => AgregarRegistroPage(),
+        '/chat-ia': (context) => ChatPage(),
+        '/planificacion': (context) => PlanificacionPage(),
+        '/pagosplanificados': (context) => PagosPlanificadosPage(),
+        '/presupuestos': (context) => PresupuestosPage(),
+        '/Historial de Gastos': (context) => HistorialGastosPage(),
+      },
     );
   }
 }
