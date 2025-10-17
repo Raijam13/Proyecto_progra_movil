@@ -11,6 +11,7 @@ import 'package:aprende_wallet_app/pages/ChatIA/page_chat.dart';
 import 'package:aprende_wallet_app/pages/Planificacion/planificacion_page.dart';
 import 'package:aprende_wallet_app/pages/planificacion/pagos_planificados_page.dart';
 import 'package:aprende_wallet_app/pages/Planificacion/presupuestos_page.dart';
+import 'package:aprende_wallet_app/pages/Historial_Gastos/historial_gasto_page.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -60,6 +61,7 @@ class MainApp extends StatelessWidget {
         '/planificacion': (context) => PlanificacionPage(),
         '/pagosplanificados': (context) => PagosPlanificadosPage(),
         '/presupuestos': (context) => PresupuestosPage(),
+        '/Historial de Gastos': (context) => HistorialGastosPage(),
       },
     );
   }
