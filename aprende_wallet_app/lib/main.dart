@@ -62,6 +62,8 @@ class MainApp extends StatelessWidget {
         '/agregar-registro': (context) => AgregarRegistroPage(),
         '/chat-ia': (context) => ChatPage(),
         '/planificacion': (context) => PlanificacionPage(),
+        '/splash_pagosplanificados': (context) => SplashPagosPlanificadosPage(),
+        '/splash_presupuestos': (context) => SplashPresupuestosPage(),
         '/pagosplanificados': (context) => PagosPlanificadosPage(),
         '/presupuestos': (context) => PresupuestosPage(),
         '/Historial de Gastos': (context) => HistorialGastosPage(),
