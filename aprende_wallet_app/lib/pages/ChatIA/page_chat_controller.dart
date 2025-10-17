@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:aprende_wallet_app/pages/Services/chat_service.dart';
+import 'package:aprende_wallet_app/Services/chat_service.dart';
 
 class ChatController extends GetxController {
   final ChatService chatService = Get.find<ChatService>();

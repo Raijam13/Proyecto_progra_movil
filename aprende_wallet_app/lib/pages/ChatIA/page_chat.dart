@@ -3,13 +3,15 @@ import 'package:get/get.dart';
 import 'page_chat_controller.dart';
 import 'package:aprende_wallet_app/components/navBar.dart';
 import 'package:aprende_wallet_app/pages/Home/home_controller.dart';
-import 'package:aprende_wallet_app/pages/Services/chat_service.dart'; 
+import 'package:aprende_wallet_app/Services/chat_service.dart';
 
 class ChatPage extends StatelessWidget {
   // registrar servicio antes que el controller (importante: ChatController usa Get.find<ChatService>())
   final ChatService chatService = Get.put(ChatService());
   final ChatController control = Get.put(ChatController());
-  final HomeController homeControl = Get.find<HomeController>();
+  final HomeController homeControl = Get.isRegistered<HomeController>()
+      ? Get.find<HomeController>()
+      : Get.put(HomeController(), permanent: true);
 
   ChatPage({super.key});
 
@@ -19,11 +21,18 @@ class ChatPage extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: colorScheme.surface,
-      // App bar -> IA Wallet
       appBar: AppBar(
         elevation: 0,
         backgroundColor: colorScheme.primaryContainer.withOpacity(0.1),
-        automaticallyImplyLeading: true,
+        automaticallyImplyLeading: false,
+        leading: Builder(
+          builder: (context) => IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () {
+              Navigator.pushReplacementNamed(context, '/home');
+            },
+          ),
+        ),
         title: Row(
           mainAxisSize: MainAxisSize.min,
           children: [

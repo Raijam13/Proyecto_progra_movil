@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:aprende_wallet_app/components/navBar.dart';
 import 'home_controller.dart';
+import '../../components/navBar.dart';
 
 class HomePage extends StatelessWidget {
   final HomeController control = Get.put(HomeController(), permanent: true);
@@ -19,7 +19,6 @@ class HomePage extends StatelessWidget {
           children: [
             // Sección superior con cuentas (fondo verde)
             _buildHeaderSection(context),
-            
             // Contenido scrolleable
             Expanded(
               child: SingleChildScrollView(
@@ -37,10 +36,73 @@ class HomePage extends StatelessWidget {
           ],
         ),
       ),
-      bottomNavigationBar: Obx(
-        () => CustomBottomNavBar(
-          currentIndex: control.currentNavIndex.value,
-          onTap: (index) => control.changeNavIndex(index, context),
+      bottomNavigationBar: Obx(() => CustomBottomNavBar(
+        currentIndex: control.currentNavIndex.value,
+        onTap: (index) => control.changeNavIndex(index, context),
+      )),
+    );
+  }
+
+  Widget _buildHardcodedMainExpenses() {
+    // Ejemplo de gastos principales hardcodeados
+    final List<Map<String, dynamic>> gastos = [
+      {'categoria': 'Comida', 'monto': 120.50, 'fecha': '2025-10-10'},
+      {'categoria': 'Transporte', 'monto': 60.00, 'fecha': '2025-10-12'},
+      {'categoria': 'Entretenimiento', 'monto': 45.75, 'fecha': '2025-10-14'},
+    ];
+    return Card(
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      elevation: 0,
+      color: const Color(0xFFF8FBFC),
+      child: Padding(
+        padding: const EdgeInsets.all(18.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Gastos principales',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Icon(Icons.more_horiz, color: Colors.grey[600]),
+              ],
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              'ESTE MES',
+              style: TextStyle(
+                fontSize: 13,
+                color: Colors.grey,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            const SizedBox(height: 12),
+            ...gastos.map((gasto) => Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        gasto['categoria'] as String,
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                      Text(
+                        'S/ ${(gasto['monto'] as num).toStringAsFixed(2)}',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ],
+                  ),
+                )),
+          ],
         ),
       ),
     );
@@ -193,6 +255,11 @@ class HomePage extends StatelessWidget {
   Widget _buildMainExpensesSection(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
+    final List<Map<String, dynamic>> gastos = [
+      {'categoria': 'Comida', 'monto': 120.50, 'fecha': '2025-10-10'},
+      {'categoria': 'Transporte', 'monto': 60.00, 'fecha': '2025-10-12'},
+      {'categoria': 'Entretenimiento', 'monto': 45.75, 'fecha': '2025-10-14'},
+    ];
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
       padding: const EdgeInsets.all(16),
@@ -238,6 +305,26 @@ class HomePage extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
+          ...gastos.map((gasto) => Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      gasto['categoria'] as String,
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                    Text(
+                      'S/ ${(gasto['monto'] as num).toStringAsFixed(2)}',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ],
+                ),
+              )),
+          const SizedBox(height: 8),
           Align(
             alignment: Alignment.centerRight,
             child: TextButton(
