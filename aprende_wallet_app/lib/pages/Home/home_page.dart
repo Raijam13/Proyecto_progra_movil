@@ -94,7 +94,7 @@ class HomePage extends StatelessWidget {
     return Container(
       width: 150,
       margin: const EdgeInsets.only(right: 12),
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
         color: colorScheme.onPrimary,
         borderRadius: BorderRadius.circular(16),
@@ -123,7 +123,7 @@ class HomePage extends StatelessWidget {
               fontWeight: FontWeight.w500,
             ),
           ),
-          const SizedBox(height: 4),
+          //const SizedBox(height: 4),
           Text(
             '${account['amount'].toStringAsFixed(2)}',
             style: const TextStyle(

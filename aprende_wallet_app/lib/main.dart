@@ -11,7 +11,9 @@ import 'package:aprende_wallet_app/pages/Perfil/perfil_page.dart';
 import 'package:aprende_wallet_app/pages/Agregar_Registro/agregar_registro_page.dart';
 import 'package:aprende_wallet_app/pages/ChatIA/page_chat.dart';
 import 'package:aprende_wallet_app/pages/Planificacion/planificacion_page.dart';
+import 'package:aprende_wallet_app/pages/Planificacion/pagos_planificados/agregar_pago_planificado_page.dart';
 import 'package:aprende_wallet_app/pages/Planificacion/pagos_planificados/splash_pagos_planificados_page.dart';
+import 'package:aprende_wallet_app/pages/Planificacion/presupuestos/agregar_presupuesto_page.dart';
 import 'package:aprende_wallet_app/pages/Planificacion/presupuestos/splash_presupuestos_page.dart';
 
 import 'package:flutter/material.dart';
@@ -65,6 +67,9 @@ class MainApp extends StatelessWidget {
         '/splash_presupuestos': (context) => SplashPresupuestosPage(),
         '/pagosplanificados': (context) => PagosPlanificadosPage(),
         '/presupuestos': (context) => PresupuestosPage(),
+        '/agregar-pago-planificado': (context) =>
+            const AgregarPagoPlanificadoPage(),
+        '/agregar-presupuesto': (context) => const AgregarPresupuestoPage(),
       },
     );
   }

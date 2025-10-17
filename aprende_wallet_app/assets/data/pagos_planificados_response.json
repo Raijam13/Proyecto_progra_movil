@@ -1,0 +1,24 @@
+{
+  "success": true,
+  "message": "Pagos planificados obtenidos correctamente.",
+  "data": [
+    {
+      "id": "pp_001",
+      "nombre": "Suscripción Netflix",
+      "monto": 45.90,
+      "tipo": "gasto",
+      "periodo": "Mensual",
+      "categoria": "Suscripciones",
+      "proximaFecha": "2024-07-15"
+    },
+    {
+      "id": "pp_002",
+      "nombre": "Salario",
+      "monto": 3500.00,
+      "tipo": "ingreso",
+      "periodo": "Mensual",
+      "categoria": "Salario",
+      "proximaFecha": "2024-07-30"
+    }
+  ]
+}

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:aprende_wallet_app/components/splash_info_page.dart';
+import 'package:get/get.dart';
 
 class SplashPagosPlanificadosPage extends StatelessWidget {
   const SplashPagosPlanificadosPage({super.key});
@@ -23,9 +24,7 @@ class SplashPagosPlanificadosPage extends StatelessWidget {
         subtitle:
             'Visualiza y organiza todos los pagos que planeas realizar, mantén el control de tus fechas y montos.',
         buttonText: 'Agregar pago planificado',
-        onButtonPressed: () {
-          Navigator.pushReplacementNamed(context, '/pagosplanificados');
-        },
+        onButtonPressed: () => Get.offNamed('/pagosplanificados'),
       ),
     );
   }

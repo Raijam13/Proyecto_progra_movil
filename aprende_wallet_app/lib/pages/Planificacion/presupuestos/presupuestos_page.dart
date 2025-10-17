@@ -14,13 +14,12 @@ class PresupuestosPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Planificación', style: Theme.of(context).textTheme.bodyMedium),
+        title: Text('Mis Presupuestos', style: Theme.of(context).textTheme.titleLarge),
+        centerTitle: true,
         actions: [
           IconButton(
             icon: const Icon(Icons.add_circle_outline, size: 30),
-            onPressed: () {
-              // TODO: Navegar a la pantalla de agregar presupuesto
-            },
+            onPressed: () => Get.toNamed('/agregar-presupuesto'),
           ),
         ],
       ),
@@ -47,9 +46,7 @@ class PresupuestosPage extends StatelessWidget {
       subtitle:
           'Define tus metas de gasto y controla mejor tus finanzas asignando límites a tus categorías.',
       buttonText: 'Agregar presupuesto',
-      onButtonPressed: () {
-        // TODO: Navegar a la pantalla de agregar presupuesto
-      },
+      onButtonPressed: () => Get.toNamed('/agregar-presupuesto'),
     );
   }
 
