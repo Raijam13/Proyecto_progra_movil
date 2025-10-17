@@ -1,6 +1,6 @@
 
-import 'package:aprende_wallet_app/pages/Services/session_service.dart';
-import 'package:aprende_wallet_app/pages/Services/users_service.dart';
+import 'package:aprende_wallet_app/Services/session_service.dart';
+import 'package:aprende_wallet_app/Services/users_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

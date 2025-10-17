@@ -6,7 +6,7 @@ import '../Home/home_controller.dart'; // <-- agregar
 
 class PlanificacionPage extends StatelessWidget {
   final PlanificacionController control = Get.put(PlanificacionController());
-  final HomeController homeControl = Get.find<HomeController>(); // <-- agregar
+  final HomeController homeControl = Get.put(HomeController());
 
   PlanificacionPage({super.key});
 
@@ -17,45 +17,15 @@ class PlanificacionPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: colorScheme.surface,
       appBar: AppBar(
-        automaticallyImplyLeading: false,
-        backgroundColor: Colors.transparent,
-        elevation: 0,
+        automaticallyImplyLeading: false, // Oculta el botón de retroceso
+        title: Image.asset('assets/images/Logo.png', width: 40, height: 40),
         centerTitle: true,
-        title: const Text(
-          'Planificación',
-          style: TextStyle(
-            fontSize: 22,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+        backgroundColor: colorScheme.surface,
+        elevation: 0,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            _buildCard(
-              context,
-              title: 'Pagos Planificados',
-              subtitle: 'Tus Pagos Futuros',
-              icon: Icons.calendar_today_outlined,
-              color: Colors.teal,
-              onTap: () => control.irAPagosPlanificados(context),
-            ),
-            const SizedBox(height: 16),
-            _buildCard(
-              context,
-              title: 'Presupuestos',
-              subtitle: 'Tu Plan de Gastos',
-              icon: Icons.savings_outlined,
-              color: Colors.amber[700]!,
-              onTap: () => control.irAPresupuestos(context),
-            ),
-          ],
-        ),
-      ),
+      body: planifica_body(context),
       // Mantiene la barra inferior
-      bottomNavigationBar: 
-      Obx(
+      bottomNavigationBar: Obx(
         () => CustomBottomNavBar(
           currentIndex: homeControl.currentNavIndex.value,
           onTap: (index) => homeControl.changeNavIndex(index, context),
@@ -64,58 +34,74 @@ class PlanificacionPage extends StatelessWidget {
     );
   }
 
+  Widget planifica_body(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(20.0),
+      child: Column(
+        spacing: 5,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Planificación',
+            style: Theme.of(context).textTheme.displayMedium,
+          ),
+          _buildCard(
+            context,
+            title: 'Pagos Planificados',
+            subtitle: 'Tus Pagos Futuros',
+            image: 'assets/images/Planifica.png',
+            onTap: () => control.irAPagosPlanificados(context),
+          ),
+          const SizedBox(height: 16),
+          _buildCard(
+            context,
+            title: 'Presupuestos',
+            subtitle: 'Tu Plan de Gastos',
+            image: 'assets/images/Presupuesto.png',
+            onTap: () => control.irAPresupuestos(context),
+          ),
+        ],
+      ),
+    );
+  }
+
   // --- Tarjetas personalizadas ---
-  Widget _buildCard(BuildContext context,
-      {required String title,
-      required String subtitle,
-      required IconData icon,
-      required Color color,
-      required VoidCallback onTap}) {
+  Widget _buildCard(
+    BuildContext context, {
+    required String title,
+    required String subtitle,
+    required String image,
+    required VoidCallback onTap,
+  }) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 10,
+              color: Theme.of(context).shadowColor.withAlpha(30),
+              blurRadius: 5,
               offset: const Offset(0, 2),
             ),
           ],
         ),
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: color.withOpacity(0.15),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Icon(icon, color: color, size: 32),
-            ),
-            const SizedBox(width: 16),
             Expanded(
               child: Column(
+                spacing: 6,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    title,
-                    style: const TextStyle(
-                        fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    subtitle,
-                    style: TextStyle(fontSize: 14, color: Colors.grey[600]),
-                  ),
+                  Text(title, style: Theme.of(context).textTheme.titleLarge),
+                  Text(subtitle, style: Theme.of(context).textTheme.bodyMedium),
                 ],
               ),
             ),
-            const Icon(Icons.arrow_forward_ios_rounded,
-                color: Colors.grey, size: 18),
+            Image.asset(image, width: 100, height: 100),
           ],
         ),
       ),

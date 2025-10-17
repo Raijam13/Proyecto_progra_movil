@@ -1,4 +1,6 @@
 import 'package:aprende_wallet_app/configs/theme.dart';
+import 'package:aprende_wallet_app/pages/Planificacion/pagos_planificados/pagos_planificados_page.dart';
+import 'package:aprende_wallet_app/pages/Planificacion/presupuestos/presupuestos_page.dart';
 import 'pages/sign_in/sign_in_page.dart';
 import 'package:aprende_wallet_app/pages/log_inNO/sign_up.dart';
 import 'package:aprende_wallet_app/pages/splash/splash_page.dart';
@@ -9,11 +11,12 @@ import 'package:aprende_wallet_app/pages/Perfil/perfil_page.dart';
 import 'package:aprende_wallet_app/pages/Agregar_Registro/agregar_registro_page.dart';
 import 'package:aprende_wallet_app/pages/ChatIA/page_chat.dart';
 import 'package:aprende_wallet_app/pages/Planificacion/planificacion_page.dart';
-import 'package:aprende_wallet_app/pages/planificacion/pagos_planificados_page.dart';
-import 'package:aprende_wallet_app/pages/Planificacion/presupuestos_page.dart';
+import 'package:aprende_wallet_app/pages/Planificacion/pagos_planificados/splash_pagos_planificados_page.dart';
+import 'package:aprende_wallet_app/pages/Planificacion/presupuestos/splash_presupuestos_page.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:get/get.dart';
 
 void main() {
   runApp(const MainApp());
@@ -27,7 +30,7 @@ class MainApp extends StatelessWidget {
     final baseTextTheme = ThemeData(useMaterial3: true).textTheme;
     final mt = MaterialTheme(baseTextTheme);
 
-    return MaterialApp(
+    return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       themeMode: ThemeMode.light, // Forzar el modo claro para testear
       theme: mt.light(),
@@ -47,20 +50,22 @@ class MainApp extends StatelessWidget {
       ],
 
       initialRoute: '/home',
-      routes: {
-        '/': (context) => const SplashPage(),
-        '/bienvenida': (context) => const BienvenidaPage(),
-        '/login': (context) => SignInPage(),
-        '/signup': (context) => SignUpPage(),
-        '/home': (context) => HomePage(),
-        '/crear-cuenta': (context) => CrearCuentaPage(),
-        '/perfil': (context) => PerfilPage(),
-        '/agregar-registro': (context) => AgregarRegistroPage(),
-        '/chat-ia': (context) => ChatPage(),
-        '/planificacion': (context) => PlanificacionPage(),
-        '/pagosplanificados': (context) => PagosPlanificadosPage(),
-        '/presupuestos': (context) => PresupuestosPage(),
-      },
+      getPages: [
+        GetPage(name: '/', page: () => const SplashPage()),
+        GetPage(name: '/bienvenida', page: () => const BienvenidaPage()),
+        GetPage(name: '/login', page: () => SignInPage()),
+        GetPage(name: '/signup', page: () => SignUpPage()),
+        GetPage(name: '/home', page: () => HomePage()),
+        GetPage(name: '/crear-cuenta', page: () => CrearCuentaPage()),
+        GetPage(name: '/perfil', page: () => PerfilPage()),
+        GetPage(name: '/agregar-registro', page: () => AgregarRegistroPage()),
+        GetPage(name: '/chat-ia', page: () => ChatPage()),
+        GetPage(name: '/planificacion', page: () => PlanificacionPage()),
+        GetPage(name: '/splash_pagosplanificados', page: () => const SplashPagosPlanificadosPage()),
+        GetPage(name: '/splash_presupuestos', page: () => const SplashPresupuestosPage()),
+        GetPage(name: '/presupuestos', page: () => const PresupuestosPage()),
+        GetPage(name: '/pagosplanificados', page: () => const PagosPlanificadosPage()),
+      ],
     );
   }
 }

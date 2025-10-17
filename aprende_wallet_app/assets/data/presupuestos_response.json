@@ -1,0 +1,21 @@
+{
+  "success": true,
+  "message": "Presupuestos obtenidos correctamente.",
+  "data": [
+    {
+      "id": "pre_001",
+      "nombre": "Comida Mensual",
+      "montoTotal": 500.00,
+      "montoGastado": 250.50,
+      "icono": "fastfood"
+    },
+    {
+      "id": "pre_002",
+      "nombre": "Transporte",
+      "montoTotal": 100.00,
+      "montoGastado": 80.00,
+      "icono": "directions_bus"
+    }
+  ],
+  "error": null
+}

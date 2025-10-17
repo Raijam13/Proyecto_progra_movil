@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 class PlanificacionController extends GetxController {
   // Método para ir a la pantalla de Pagos Planificados
   void irAPagosPlanificados(BuildContext context) {
-    Navigator.pushNamed(context, '/pagosplanificados');
+    Navigator.pushNamed(context, '/splash_pagosplanificados');
   }
 
   // Método para ir a la pantalla de Presupuestos
   void irAPresupuestos(BuildContext context) {
-    Navigator.pushNamed(context, '/presupuestos');
+    Navigator.pushNamed(context, '/splash_presupuestos');
   }
 }
