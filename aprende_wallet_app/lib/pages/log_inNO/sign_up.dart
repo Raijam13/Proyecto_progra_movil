@@ -276,21 +276,23 @@ class SignUpPage extends StatelessWidget {
   }
 
   Widget _backToLogin() {
-    return GestureDetector(
-      onTap: () {
-        /* control.goToSignIn(); */
-      },
-      child: SizedBox(
-        width: 229,
-        height: 30,
-        child: Text(
-          'Regresar al inicio de sesión',
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            color: const Color(0xFF121515),
-            fontSize: 16,
-            fontFamily: 'Hind',
-            fontWeight: FontWeight.w300,
+    return Builder(
+      builder: (context) => GestureDetector(
+        onTap: () {
+          Navigator.pushReplacementNamed(context, '/login');
+        },
+        child: SizedBox(
+          width: 229,
+          height: 30,
+          child: Text(
+            'Regresar al inicio de sesión',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: const Color(0xFF121515),
+              fontSize: 16,
+              fontFamily: 'Hind',
+              fontWeight: FontWeight.w300,
+            ),
           ),
         ),
       ),
