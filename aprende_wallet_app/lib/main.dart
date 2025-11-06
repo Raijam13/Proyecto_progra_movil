@@ -51,7 +51,7 @@ class MainApp extends StatelessWidget {
         Locale('en'), // Inglés
       ],
 
-      initialRoute: '/home',
+      initialRoute: '/login',
       routes: {
         '/': (context) => const SplashPage(),
         '/bienvenida': (context) => const BienvenidaPage(),
