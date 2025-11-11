@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-/*import 'sign_up_controller.dart'; */
-class SignUpPage extends StatelessWidget {
- /* final SignUpController control = Get.put(SignUpController()); */
+import 'package:get/get.dart';
+import 'sign_up_controller.dart';
 
-   const SignUpPage({super.key});
+class SignUpPage extends StatelessWidget {
+  final SignUpController control = Get.put(SignUpController());
+
+   SignUpPage({super.key});
 
   Widget _background(BuildContext context) {
     return Container(
@@ -94,7 +96,7 @@ class SignUpPage extends StatelessWidget {
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
           ),
           child: TextFormField(
-            /* controller: control.firstName, */
+            controller: control.firstName,
             decoration: const InputDecoration(
               border: InputBorder.none,
               contentPadding: EdgeInsets.only(left: 20, top: 16),
@@ -124,7 +126,7 @@ class SignUpPage extends StatelessWidget {
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
           ),
           child: TextFormField(
-            /* controller: control.lastName, */
+            controller: control.lastName,
             decoration: const InputDecoration(
               border: InputBorder.none,
               contentPadding: EdgeInsets.only(left: 20, top: 15),
@@ -158,7 +160,7 @@ class SignUpPage extends StatelessWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
       ),
       child: TextFormField(
-        /* controller: control.email, */
+        controller: control.email,
         decoration: const InputDecoration(
           border: InputBorder.none,
           contentPadding: EdgeInsets.only(left: 20, top: 16),
@@ -190,7 +192,7 @@ class SignUpPage extends StatelessWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
       ),
       child: TextFormField(
-        /* controller: control.password, */
+        controller: control.password,
         obscureText: true,
         decoration: const InputDecoration(
           border: InputBorder.none,
@@ -223,7 +225,7 @@ class SignUpPage extends StatelessWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
       ),
       child: TextFormField(
-        /* controller: control.confirmPassword, */
+        controller: control.confirmPassword,
         obscureText: true,
         decoration: const InputDecoration(
           border: InputBorder.none,
@@ -247,31 +249,49 @@ class SignUpPage extends StatelessWidget {
   }
 
   Widget _verifyButton(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        /* control.verify(context); */
-      },
-      child: Container(
-        width: 310,
-        height: 60,
-        clipBehavior: Clip.antiAlias,
-        decoration: ShapeDecoration(
-          color: const Color(0xFF1B3A46),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
-        ),
-        child: const Center(
-          child: Text(
-            'Verificar',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 28,
-              fontFamily: 'Hind',
-              fontWeight: FontWeight.w700,
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        GestureDetector(
+          onTap: () {
+            control.registrarUsuario(context);
+          },
+          child: Container(
+            width: 310,
+            height: 60,
+            clipBehavior: Clip.antiAlias,
+            decoration: ShapeDecoration(
+              color: const Color(0xFF1B3A46),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
+            ),
+            child: const Center(
+              child: Text(
+                'Registrar',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 28,
+                  fontFamily: 'Hind',
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
             ),
           ),
         ),
-      ),
+        const SizedBox(height: 10),
+        Obx(
+          () => Text(
+            control.message.value,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: control.success.value
+                  ? Theme.of(context).colorScheme.tertiary
+                  : Theme.of(context).colorScheme.error,
+              fontSize: 14,
+            ),
+          ),
+        ),
+      ],
     );
   }
 
