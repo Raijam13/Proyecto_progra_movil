@@ -1,79 +1,97 @@
 import 'package:flutter/material.dart';
+import '../../../Services/tipos_service.dart';
 
-class SeleccionarTipoCuentaModal extends StatelessWidget {
-  final String selectedType;
-  final Function(String) onSelect;
-
-  // Lista de tipos de cuenta hardcodeada (más adelante desde BD)
-  static const List<Map<String, dynamic>> tiposCuenta = [
-    {
-      'name': 'General',
-      'icon': Icons.layers_outlined,
-    },
-    {
-      'name': 'Efectivo',
-      'icon': Icons.account_balance_wallet_outlined,
-    },
-    {
-      'name': 'Cuenta corriente',
-      'icon': Icons.account_balance_outlined,
-    },
-    {
-      'name': 'Tarjeta de crédito',
-      'icon': Icons.credit_card,
-    },
-    {
-      'name': 'Cuenta de ahorros',
-      'icon': Icons.savings_outlined,
-    },
-    {
-      'name': 'Bono',
-      'icon': Icons.auto_awesome_outlined,
-    },
-    {
-      'name': 'Seguro',
-      'icon': Icons.shield_outlined,
-    },
-    {
-      'name': 'Inversión',
-      'icon': Icons.trending_up,
-    },
-    {
-      'name': 'Préstamo',
-      'icon': Icons.local_atm_outlined,
-    },
-    {
-      'name': 'Hipoteca',
-      'icon': Icons.home_outlined,
-    },
-    {
-      'name': 'Cuenta con sobregiro',
-      'icon': Icons.account_balance_wallet,
-    },
-  ];
-
-  const SeleccionarTipoCuentaModal({
-    super.key,
-    required this.selectedType,
-    required this.onSelect,
-  });
-
+class SeleccionarTipoCuentaModal {
   static void show({
     required BuildContext context,
     required String selectedType,
-    required Function(String) onSelect,
+    required Function(String nombre) onSelect,
   }) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (BuildContext context) {
-        return SeleccionarTipoCuentaModal(
+        return _SeleccionarTipoCuentaContent(
           selectedType: selectedType,
           onSelect: onSelect,
         );
       },
     );
+  }
+}
+
+class _SeleccionarTipoCuentaContent extends StatefulWidget {
+  final String selectedType;
+  final Function(String nombre) onSelect;
+
+  const _SeleccionarTipoCuentaContent({
+    required this.selectedType,
+    required this.onSelect,
+  });
+
+  @override
+  State<_SeleccionarTipoCuentaContent> createState() => _SeleccionarTipoCuentaContentState();
+}
+
+class _SeleccionarTipoCuentaContentState extends State<_SeleccionarTipoCuentaContent> {
+  List<Map<String, dynamic>> tiposCuenta = [];
+  bool isLoading = true;
+  String? errorMessage;
+
+  @override
+  void initState() {
+    super.initState();
+    _cargarTiposCuenta();
+  }
+
+  Future<void> _cargarTiposCuenta() async {
+    setState(() {
+      isLoading = true;
+      errorMessage = null;
+    });
+
+    try {
+      final data = await TiposService.listarTiposCuenta();
+      setState(() {
+        tiposCuenta = data;
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        errorMessage = 'Error al cargar tipos de cuenta: $e';
+        isLoading = false;
+      });
+    }
+  }
+
+  IconData _getIconForTipo(String nombre) {
+    switch (nombre.toLowerCase()) {
+      case 'general':
+        return Icons.layers_outlined;
+      case 'efectivo':
+        return Icons.account_balance_wallet_outlined;
+      case 'cuenta corriente':
+        return Icons.account_balance_outlined;
+      case 'tarjeta de crédito':
+        return Icons.credit_card;
+      case 'cuenta de ahorros':
+        return Icons.savings_outlined;
+      case 'bono':
+        return Icons.auto_awesome_outlined;
+      case 'seguro':
+        return Icons.shield_outlined;
+      case 'inversión':
+        return Icons.trending_up;
+      case 'préstamo':
+        return Icons.local_atm_outlined;
+      case 'hipoteca':
+        return Icons.home_outlined;
+      case 'cuenta con sobregiro':
+        return Icons.account_balance_wallet;
+      default:
+        return Icons.account_balance;
+    }
   }
 
   @override
@@ -91,9 +109,40 @@ class SeleccionarTipoCuentaModal extends StatelessWidget {
         children: [
           _buildHeader(context),
           const Divider(height: 1, thickness: 1),
-          Expanded(
-            child: _buildTypeList(context),
-          ),
+          if (isLoading)
+            const Expanded(
+              child: Center(child: CircularProgressIndicator()),
+            )
+          else if (errorMessage != null)
+            Expanded(
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.error_outline, size: 48, color: Colors.red),
+                    const SizedBox(height: 8),
+                    Text(errorMessage!, textAlign: TextAlign.center),
+                  ],
+                ),
+              ),
+            )
+          else if (tiposCuenta.isEmpty)
+            const Expanded(
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.account_balance_outlined, size: 48, color: Colors.grey),
+                    SizedBox(height: 8),
+                    Text('No hay tipos de cuenta disponibles', textAlign: TextAlign.center),
+                  ],
+                ),
+              ),
+            )
+          else
+            Expanded(
+              child: _buildTypeList(context),
+            ),
         ],
       ),
     );
@@ -144,11 +193,11 @@ class SeleccionarTipoCuentaModal extends StatelessWidget {
       ),
       itemBuilder: (context, index) {
         final tipo = tiposCuenta[index];
-        final isSelected = tipo['name'] == selectedType;
+        final isSelected = tipo['nombre'] == widget.selectedType;
 
         return InkWell(
           onTap: () {
-            onSelect(tipo['name']);
+            widget.onSelect(tipo['nombre'] as String);
             Navigator.pop(context);
           },
           child: Padding(
@@ -164,7 +213,7 @@ class SeleccionarTipoCuentaModal extends StatelessWidget {
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: Icon(
-                    tipo['icon'],
+                    _getIconForTipo(tipo['nombre'] as String),
                     size: 20,
                     color: Colors.grey[700],
                   ),
@@ -173,7 +222,7 @@ class SeleccionarTipoCuentaModal extends StatelessWidget {
                 // Nombre del tipo
                 Expanded(
                   child: Text(
-                    tipo['name'],
+                    tipo['nombre'] as String,
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: isSelected ? FontWeight.w500 : FontWeight.w400,

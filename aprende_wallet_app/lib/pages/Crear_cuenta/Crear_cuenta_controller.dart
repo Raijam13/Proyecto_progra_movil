@@ -4,6 +4,8 @@ import '../Crear_cuenta/edicion_modals/editar_nombre_cuenta.dart';
 import '../Crear_cuenta/edicion_modals/editar_saldo_cuenta.dart';
 import '../Crear_cuenta/edicion_modals/seleccionar_moneda.dart';
 import '../Crear_cuenta/edicion_modals/seleccionar_tipo_cuenta.dart';
+import '../../Services/cuentas_service.dart';
+import '../Home/home_controller.dart';
 
 class CrearCuentaController extends GetxController {
   // Campos de la cuenta
@@ -14,6 +16,12 @@ class CrearCuentaController extends GetxController {
   
   // Toggle de acciones
   RxBool excludeFromStats = false.obs;
+  
+  // Loading state
+  RxBool isLoading = false.obs;
+  
+  // User ID (debería venir de sesión)
+  final int userId = 1;
 
   // Método para cancelar (volver atrás)
   void cancel(BuildContext context) {
@@ -81,7 +89,7 @@ class CrearCuentaController extends GetxController {
   }
 
   // Método para guardar la cuenta
-  void saveAccount(BuildContext context) {
+  Future<void> saveAccount(BuildContext context) async {
     // Validar datos
     if (accountName.value.isEmpty) {
       Get.snackbar(
@@ -94,25 +102,47 @@ class CrearCuentaController extends GetxController {
       return;
     }
 
-    // Por ahora solo imprime los datos
-    print('Guardando cuenta:');
-    print('Nombre: ${accountName.value}');
-    print('Saldo: ${currentBalance.value}');
-    print('Moneda: ${currency.value}');
-    print('Tipo: ${accountType.value}');
-    print('Excluir de estadísticas: ${excludeFromStats.value}');
+    isLoading.value = true;
+    try {
+      // Crear cuenta en el backend
+      await CuentasService.crearCuenta(
+        nombre: accountName.value,
+        saldo: currentBalance.value,
+        idUsuario: userId,
+        codeMoneda: currency.value,
+        tipoCuenta: accountType.value,
+      );
 
-    // Más adelante se conectará con el servicio
-    // Mostrar mensaje de éxito
-    Get.snackbar(
-      'Éxito',
-      'Cuenta creada correctamente',
-      snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: Colors.green,
-      colorText: Colors.white,
-    );
+      // Recargar las cuentas en el HomeController
+      try {
+        final homeController = Get.find<HomeController>();
+        await homeController.cargarCuentas();
+      } catch (e) {
+        print('HomeController no encontrado: $e');
+      }
 
-    // Volver atrás
-    Navigator.pop(context);
+      // Mostrar mensaje de éxito
+      Get.snackbar(
+        'Éxito',
+        'Cuenta creada correctamente',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+      );
+
+      // Volver atrás
+      Navigator.pop(context);
+    } catch (e) {
+      print('Error al guardar cuenta: $e');
+      Get.snackbar(
+        'Error',
+        'No se pudo crear la cuenta: $e',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    } finally {
+      isLoading.value = false;
+    }
   }
 }

@@ -1,45 +1,68 @@
 import 'package:flutter/material.dart';
+import '../../../Services/monedas_service.dart';
 
-class SeleccionarMonedaModal extends StatelessWidget {
-  final String selectedCurrency;
-  final Function(String) onSelect;
-
-  // Lista de monedas hardcodeada (más adelante desde BD)
-  static const List<Map<String, String>> monedas = [
-    {'code': 'PEN', 'name': 'Sol Peruano'},
-    {'code': 'USD', 'name': 'Dólar Estadounidense'},
-    {'code': 'EUR', 'name': 'Euro'},
-    {'code': 'MXN', 'name': 'Peso Mexicano'},
-    {'code': 'CLP', 'name': 'Peso Chileno'},
-    {'code': 'ARS', 'name': 'Peso Argentino'},
-    {'code': 'COP', 'name': 'Peso Colombiano'},
-    {'code': 'BRL', 'name': 'Real Brasileño'},
-    {'code': 'GBP', 'name': 'Libra Esterlina'},
-    {'code': 'JPY', 'name': 'Yen Japonés'},
-  ];
-
-  const SeleccionarMonedaModal({
-    super.key,
-    required this.selectedCurrency,
-    required this.onSelect,
-  });
-
+class SeleccionarMonedaModal {
   static void show({
     required BuildContext context,
     required String selectedCurrency,
-    required Function(String) onSelect,
+    required Function(String code) onSelect,
   }) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (BuildContext context) {
-        return SeleccionarMonedaModal(
+        return _SeleccionarMonedaContent(
           selectedCurrency: selectedCurrency,
           onSelect: onSelect,
         );
       },
     );
+  }
+}
+
+class _SeleccionarMonedaContent extends StatefulWidget {
+  final String selectedCurrency;
+  final Function(String code) onSelect;
+
+  const _SeleccionarMonedaContent({
+    required this.selectedCurrency,
+    required this.onSelect,
+  });
+
+  @override
+  State<_SeleccionarMonedaContent> createState() => _SeleccionarMonedaContentState();
+}
+
+class _SeleccionarMonedaContentState extends State<_SeleccionarMonedaContent> {
+  List<Map<String, dynamic>> monedas = [];
+  bool isLoading = true;
+  String? errorMessage;
+
+  @override
+  void initState() {
+    super.initState();
+    _cargarMonedas();
+  }
+
+  Future<void> _cargarMonedas() async {
+    setState(() {
+      isLoading = true;
+      errorMessage = null;
+    });
+
+    try {
+      final data = await MonedasService.listarMonedas();
+      setState(() {
+        monedas = data;
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        errorMessage = 'Error al cargar monedas: $e';
+        isLoading = false;
+      });
+    }
   }
 
   @override
@@ -57,9 +80,40 @@ class SeleccionarMonedaModal extends StatelessWidget {
         children: [
           _buildHeader(context),
           const Divider(height: 1, thickness: 8, color: Color(0xFFF5F5F5)),
-          Expanded(
-            child: _buildCurrencyList(context),
-          ),
+          if (isLoading)
+            const Expanded(
+              child: Center(child: CircularProgressIndicator()),
+            )
+          else if (errorMessage != null)
+            Expanded(
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.error_outline, size: 48, color: Colors.red),
+                    const SizedBox(height: 8),
+                    Text(errorMessage!, textAlign: TextAlign.center),
+                  ],
+                ),
+              ),
+            )
+          else if (monedas.isEmpty)
+            const Expanded(
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.money_off, size: 48, color: Colors.grey),
+                    SizedBox(height: 8),
+                    Text('No hay monedas disponibles', textAlign: TextAlign.center),
+                  ],
+                ),
+              ),
+            )
+          else
+            Expanded(
+              child: _buildCurrencyList(context),
+            ),
         ],
       ),
     );
@@ -102,11 +156,11 @@ class SeleccionarMonedaModal extends StatelessWidget {
       ),
       itemBuilder: (context, index) {
         final moneda = monedas[index];
-        final isSelected = moneda['code'] == selectedCurrency;
+        final isSelected = moneda['code'] == widget.selectedCurrency;
 
         return InkWell(
           onTap: () {
-            onSelect(moneda['code']!);
+            widget.onSelect(moneda['code'] as String);
             Navigator.pop(context);
           },
           child: Padding(
@@ -118,7 +172,7 @@ class SeleccionarMonedaModal extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        moneda['code']!,
+                        moneda['code'] as String,
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
@@ -127,7 +181,7 @@ class SeleccionarMonedaModal extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        moneda['name']!,
+                        moneda['nombre'] as String,
                         style: TextStyle(
                           fontSize: 14,
                           color: Colors.grey[600],

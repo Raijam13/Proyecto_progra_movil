@@ -1,24 +1,104 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../Services/cuentas_service.dart';
+import '../../Services/registros_service.dart';
+import '../../Services/dashboard_service.dart';
 
 class HomeController extends GetxController {
   // Controla si se muestra la lista completa de registros
   RxBool mostrarTodosRegistros = false.obs;
   // Índice activo del bottom nav bar
   RxInt currentNavIndex = 0.obs;
+  // Loading state
+  RxBool isLoading = false.obs;
+  // User ID (hardcodeado por ahora, debería venir de sesión)
+  final int userId = 1;
 
-  // Lista de cuentas (hardcodeado por ahora)
-  RxList<Map<String, dynamic>> accounts = <Map<String, dynamic>>[
-    {
-      'name': 'EFECTIVO',
-      'amount': 70.00,
-      'currency': 'PEN',
-      'icon': 'wallet',
-    },
-  ].obs;
+  // Lista de cuentas (ahora desde el backend)
+  RxList<Map<String, dynamic>> accounts = <Map<String, dynamic>>[].obs;
 
-  // Lista de transacciones (ahora vacía, se llenará al guardar)
+  // Lista de transacciones (desde el backend)
   RxList<Map<String, dynamic>> transactions = <Map<String, dynamic>>[].obs;
+
+  // Balance total
+  RxDouble totalBalance = 0.0.obs;
+
+  @override
+  void onInit() {
+    super.onInit();
+    cargarDatos();
+  }
+
+  // Cargar todos los datos del backend
+  Future<void> cargarDatos() async {
+    isLoading.value = true;
+    try {
+      await Future.wait([
+        cargarCuentas(),
+        cargarRegistros(),
+        cargarBalanceTotal(),
+      ]);
+    } catch (e) {
+      print('Error al cargar datos: $e');
+      Get.snackbar(
+        'Error',
+        'No se pudieron cargar los datos',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  // Cargar cuentas desde el backend
+  Future<void> cargarCuentas() async {
+    try {
+      final cuentas = await CuentasService.listarCuentas(userId);
+      accounts.value = cuentas;
+    } catch (e) {
+      print('Error al cargar cuentas: $e');
+      rethrow;
+    }
+  }
+
+  // Cargar registros desde el backend
+  Future<void> cargarRegistros() async {
+    try {
+      final registros = await RegistrosService.listarRegistros(
+        userId: userId,
+        limit: 20,
+        offset: 0,
+      );
+      // Convertir formato del backend al formato usado en el front
+      transactions.value = registros.map((r) {
+        return {
+          'id': r['id'],
+          'title': r['category'] ?? 'Sin categoría',
+          'subtitle': r['subtitle'] ?? '',
+          'amount': (r['amount'] as num).toDouble(),
+          'date': r['date'] ?? 'hoy',
+          'type': r['type'] ?? 'expense',
+          'color': r['type'] == 'ingreso' ? 0xFF43A047 : 0xFFEF5350,
+        };
+      }).toList();
+    } catch (e) {
+      print('Error al cargar registros: $e');
+      rethrow;
+    }
+  }
+
+  // Cargar balance total desde el backend
+  Future<void> cargarBalanceTotal() async {
+    try {
+      final response = await DashboardService.obtenerBalanceTotal(userId);
+      totalBalance.value = (response['total_balance'] as num).toDouble();
+    } catch (e) {
+      print('Error al cargar balance total: $e');
+      rethrow;
+    }
+  }
 
   // Método para agregar un registro desde AgregarRegistroController
   void agregarTransaccion({

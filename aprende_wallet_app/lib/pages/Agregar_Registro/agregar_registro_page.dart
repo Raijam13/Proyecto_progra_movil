@@ -197,9 +197,10 @@ class AgregarRegistroPage extends StatelessWidget {
           onTap: () async {
             await SeleccionarCuentaModal.show(
               context: context,
+              userId: control.userId,
               initialCuenta: control.cuenta.value,
-              onSelect: (cuenta) {
-                control.setCuenta(cuenta);
+              onSelect: (nombre, id) {
+                control.setCuenta(nombre, id: id);
               },
             );
           },
@@ -213,8 +214,8 @@ class AgregarRegistroPage extends StatelessWidget {
             await SeleccionarCategoriaModal.show(
               context: context,
               initialCategoria: control.categoria.value,
-              onSelect: (categoria) {
-                control.setCategoria(categoria);
+              onSelect: (nombre, id) {
+                control.setCategoria(nombre, id: id);
               },
             );
           },
