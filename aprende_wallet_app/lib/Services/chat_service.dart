@@ -1,44 +1,31 @@
 import 'dart:convert';
-import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
+//import 'package:get/get.dart';
 
 class ChatService {
-  List<Map<String, dynamic>> respuestas = [];
+  final String apiUrl = "http://10.0.2.2:4567/chat"; // backend Ruby
 
-  /// Carga las respuestas desde assets (llamar antes de usar getResponse)
-  Future<void> loadResponses() async {
+  /// Envía el mensaje al backend y retorna la respuesta del bot
+  Future<String> getResponse(String userText, int userId) async {
     try {
-      final String jsonString =
-          await rootBundle.loadString('assets/data/chat_responses.json');
-      final Map<String, dynamic> data = json.decode(jsonString);
-      respuestas = List<Map<String, dynamic>>.from(data['respuestas'] ?? []);
-    } catch (e) {
-      // Manejo simple de errores (log) y dejar respuestas vacío
-      respuestas = [];
-      // print('Error cargando respuestas: $e');
-    }
-  }
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: { "Content-Type": "application/json" },
+        body: jsonEncode({
+          "mensaje": userText,
+          "idUsuario": userId,
+        }),
+      );
 
-  /// Busca la mejor respuesta en el JSON (sincrónico)
-  String buscarRespuesta(String textoUsuario) {
-    final lower = textoUsuario.toLowerCase();
-    for (var item in respuestas) {
-      final keywords = List<String>.from(item['keywords'] ?? []);
-      for (var palabra in keywords) {
-        if (lower.contains(palabra.toLowerCase())) {
-          return item['respuesta'] ?? _respuestaPorDefecto();
-        }
+      if (response.statusCode == 200) {
+        final body = jsonDecode(response.body);
+        return body["respuesta"] ?? "Sin respuesta";
+      } else {
+        return "Error: ${response.body}";
       }
+    } catch (e) {
+      return "Error al conectar con el servidor";
     }
-    return _respuestaPorDefecto();
-  }
-
-  String _respuestaPorDefecto() =>
-      'No tengo información específica sobre eso, pero puedo ayudarte a analizar tus finanzas.';
-
-  /// Interfaz para obtener la respuesta (simula latencia)
-  Future<String> getResponse(String userText) async {
-    // Simular retardo (como si llamaras a una API)
-    await Future.delayed(const Duration(milliseconds: 900));
-    return buscarRespuesta(userText);
   }
 }
+

@@ -1,44 +1,53 @@
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:aprende_wallet_app/Services/chat_service.dart';
+import 'package:aprende_wallet_app/services/chat_service.dart';
 
 class ChatController extends GetxController {
-  final ChatService chatService = Get.find<ChatService>();
+  final ChatService chatService = ChatService();
 
-  RxList<Map<String, dynamic>> messages = <Map<String, dynamic>>[].obs;
+  // Lista reactiva de mensajes
+  // Cada mensaje: { text: "...", sender: "user" | "bot", time: "HH:mm" }
+  var messages = <Map<String, String>>[].obs;
 
-  @override
-  void onInit() {
-    super.onInit();
-    _initService();
-  }
+  // Enviar mensaje del usuario y recibir respuesta del bot
+  Future<void> sendMessage(String userText) async {
+    if (userText.trim().isEmpty) return;
 
-  Future<void> _initService() async {
-    // Asegurarse de cargar las respuestas antes de usarlas
-    await chatService.loadResponses();
-  }
-
-  /// Envía mensaje del usuario (añade con hora) y solicita respuesta del servicio
-  void sendMessage(String text) {
     final horaActual = DateFormat('HH:mm').format(DateTime.now());
 
+    // 1. Agregar mensaje del usuario
     messages.add({
-      'text': text,
+      'text': userText,
       'sender': 'user',
       'time': horaActual,
     });
 
-    _sendAndReceive(text);
+    // 2. Llamar al método que envía al backend y recibe respuesta
+    await _sendAndReceive(userText);
   }
 
+  // Función interna que consulta al backend
   Future<void> _sendAndReceive(String userText) async {
-    final response = await chatService.getResponse(userText);
     final horaActual = DateFormat('HH:mm').format(DateTime.now());
 
-    messages.add({
-      'text': response,
-      'sender': 'bot',
-      'time': horaActual,
-    });
+    // Id de usuario (ajústalo si lo sacas de Session/GetStorage)
+    const int userId = 1;
+
+    try {
+      final response = await chatService.getResponse(userText, userId);
+
+      // 3. Agregar mensaje del bot
+      messages.add({
+        'text': response,
+        'sender': 'bot',
+        'time': horaActual,
+      });
+    } catch (e) {
+      messages.add({
+        'text': "Error al obtener respuesta del servidor.",
+        'sender': 'bot',
+        'time': horaActual,
+      });
+    }
   }
 }
