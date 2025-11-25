@@ -1,110 +1,218 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../Perfil/perfil_modals/editar_nombre_perfil.dart';
-import '../Perfil/perfil_modals/editar_apellido_perfil.dart';
-import '../Perfil/perfil_modals/editar_correo_perfil.dart';
-import '../Perfil/perfil_modals/seleccionar_fecha_nacimiento.dart';
-import '../Perfil/perfil_modals/seleccionar_genero.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../../Services/perfil_service.dart';
 
 class PerfilController extends GetxController {
-  // Datos del usuario (hardcodeados por ahora)
-  RxString nombre = ''.obs;
-  RxString apellido = ''.obs;
-  RxString email = 'divadibu32@gmail.com'.obs;
-  RxString fechaNacimiento = 'No especificado'.obs;
-  RxString genero = 'No especificado'.obs;
-  RxString photoUrl = ''.obs; // URL de la foto de perfil
+  final PerfilService perfilService = PerfilService();
 
-  // Método para volver atrás
-  void goBack(BuildContext context) {
-    // Navega al home y limpia la pila
-    Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
+  // Datos del usuario
+  final nombre = ''.obs;
+  final apellido = ''.obs;
+  final email = ''.obs;
+  final genero = ''.obs;
+  final fechaNacimiento = ''.obs;
+  final imagenPerfil = ''.obs;
+
+  String userId = ""; // ← dinámico desde SharedPreferences
+
+  @override
+  void onInit() {
+    super.onInit();
+    cargarUserId(); // ← primero obtenemos el ID, luego se carga el perfil
   }
 
-  // Método para editar foto
-  void editPhoto() {
-    // Más adelante abrirá selector de imagen
-    print('Editar foto de perfil');
+  // --------------------------------
+  // 1) CARGAR ID DEL USUARIO
+  // --------------------------------
+  Future<void> cargarUserId() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    final idGuardado = prefs.getInt("user_id");
+
+    if (idGuardado == null) {
+      print("⚠️ No se encontró user_id en SharedPreferences");
+      return;
+    }
+
+    userId = idGuardado.toString();
+    print("✅ ID cargado en PerfilController: $userId");
+
+    cargarPerfil();
   }
 
-  // Método para editar nombre
-  void editNombre(BuildContext context) {
-    EditarNombrePerfilModal.show(
-      context: context,
-      initialValue: nombre.value,
-      onChanged: (value) {
-        nombre.value = value;
-      },
-      onAccept: (value) {
-        nombre.value = value;
-      },
-    );
+  // ------------------------------
+  //   OBTENER DATOS DEL PERFIL
+  // ------------------------------
+  Future<void> cargarPerfil() async {
+    try {
+      if (userId.isEmpty) return;
+
+      final data = await perfilService.obtenerPerfil(userId);
+      final usuario = data["usuario"];
+
+      nombre.value = usuario["nombres"] ?? "";
+      apellido.value = usuario["apellidos"] ?? "";
+      email.value = usuario["correo"] ?? "";
+      imagenPerfil.value = usuario["imagen_perfil"] ?? "";
+    } catch (e) {
+      print("Error cargando perfil: $e");
+    }
   }
 
-  // Método para editar apellido
-  void editApellido(BuildContext context) {
-    EditarApellidoPerfilModal.show(
-      context: context,
-      initialValue: apellido.value,
-      onChanged: (value) {
-        apellido.value = value;
-      },
-      onAccept: (value) {
-        apellido.value = value;
-      },
-    );
+  // ------------------------------
+  //    ACTUALIZAR CAMPO ÚNICO
+  // ------------------------------
+  Future<void> actualizarCampo(String campo, String valor) async {
+    try {
+      await perfilService.actualizarPerfil(userId, {campo: valor});
+      await cargarPerfil();
+    } catch (e) {
+      print("Error actualizando campo: $e");
+    }
   }
 
-  // Método para editar email (puede requerir verificación)
-  void editEmail(BuildContext context) {
-    EditarCorreoPerfilModal.show(
-      context: context,
-      initialValue: email.value,
-      onChanged: (value) {
-        email.value = value;
-      },
-      onAccept: (value) {
-        email.value = value;
-      },
-    );
+  // ------------------------------
+  //    ACTUALIZAR IMAGEN DE PERFIL
+  // ------------------------------
+  Future<void> actualizarImagen(File imagen) async {
+    try {
+      final result =
+          await perfilService.actualizarImagen(userId, imagen.path);
+
+      imagenPerfil.value = result["imagen_url"];
+    } catch (e) {
+      print("Error al actualizar imagen: $e");
+    }
   }
 
-  // Método para seleccionar fecha de nacimiento
-  void selectFechaNacimiento(BuildContext context) {
-    SeleccionarFechaNacimientoModal.show(
-      context: context,
-      initialDate: fechaNacimiento.value,
-      onSelect: (value) {
-        fechaNacimiento.value = value;
-      },
-    );
+  // ------------------------------
+  //      BOTÓN SELECCIONAR FOTO
+  // ------------------------------
+  Future<void> editPhoto() async {
+    final picker = ImagePicker();
+    final picked = await picker.pickImage(source: ImageSource.gallery);
+
+    if (picked != null) {
+      await actualizarImagen(File(picked.path));
+    }
   }
 
-  // Método para seleccionar género
+  // ------------------------------
+  //         EDITAR CAMPOS
+  // ------------------------------
+  Future<void> editNombre(BuildContext context) async {
+    _editarTexto(context, "Editar Nombre", nombre.value, (nuevo) {
+      actualizarCampo("nombres", nuevo);
+    });
+  }
+
+  Future<void> editApellido(BuildContext context) async {
+    _editarTexto(context, "Editar Apellido", apellido.value, (nuevo) {
+      actualizarCampo("apellidos", nuevo);
+    });
+  }
+
+  Future<void> editEmail(BuildContext context) async {
+    _editarTexto(context, "Editar Email", email.value, (nuevo) {
+      actualizarCampo("correo", nuevo);
+    });
+  }
+
+  // ------------------------------
+  //      CAMPOS ESPECIALES
+  // ------------------------------
   void selectGenero(BuildContext context) {
-    SeleccionarGeneroModal.show(
+    showDialog(
       context: context,
-      selectedGenero: genero.value,
-      onSelect: (nuevoGenero) {
-        genero.value = nuevoGenero;
-      },
+      builder: (_) => AlertDialog(
+        title: Text("Seleccionar género"),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              title: Text("Masculino"),
+              onTap: () {
+                genero.value = "Masculino";
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              title: Text("Femenino"),
+              onTap: () {
+                genero.value = "Femenino";
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        ),
+      ),
     );
   }
 
-  // Método para cerrar sesión
+  // ------------------------------
+  //   SELECCIONAR FECHA DE NACIMIENTO
+  // ------------------------------
+  Future<void> selectFechaNacimiento(BuildContext context) async {
+    DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now().subtract(Duration(days: 3650)),
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now(),
+    );
+
+    if (picked != null) {
+      fechaNacimiento.value = "${picked.year}-${picked.month}-${picked.day}";
+      actualizarCampo("fecha_nacimiento", fechaNacimiento.value);
+    }
+  }
+
+  // ------------------------------
+  //     CERRAR SESIÓN
+  // ------------------------------
   void cerrarSesion(BuildContext context) {
-    Get.defaultDialog(
-      title: 'Cerrar sesión',
-      middleText: '¿Estás seguro que deseas cerrar sesión?',
-      textConfirm: 'Sí, cerrar sesión',
-      textCancel: 'Cancelar',
-      confirmTextColor: Colors.white,
-      onConfirm: () {
-        // Más adelante limpiará la sesión y navegará al login
-        Get.back(); // Cierra el diálogo
-        print('Cerrando sesión...');
-        // Navigator.pushReplacementNamed(context, '/login');
-      },
+    Navigator.pushReplacementNamed(context, "/login");
+  }
+
+  // ------------------------------
+  //    VOLVER ATRÁS
+  // ------------------------------
+  void goBack(BuildContext context) {
+    Navigator.pop(context);
+  }
+
+  // ------------------------------
+  //   DIÁLOGO EDITAR TEXTO
+  // ------------------------------
+  void _editarTexto(
+      BuildContext context, String titulo, String valorInicial, Function(String) onSave) {
+    TextEditingController controller =
+        TextEditingController(text: valorInicial);
+
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: Text(titulo),
+        content: TextField(
+          controller: controller,
+          decoration: InputDecoration(hintText: "Nuevo valor"),
+        ),
+        actions: [
+          TextButton(
+            child: Text("Cancelar"),
+            onPressed: () => Navigator.pop(context),
+          ),
+          TextButton(
+            child: Text("Guardar"),
+            onPressed: () {
+              onSave(controller.text);
+              Navigator.pop(context);
+            },
+          ),
+        ],
+      ),
     );
   }
 }
