@@ -8,6 +8,7 @@ import 'package:aprende_wallet_app/pages/sign_up/bienvenida_page.dart';
 import 'package:aprende_wallet_app/pages/Home/home_page.dart';
 import 'package:aprende_wallet_app/pages/Crear_cuenta/Crear_cuenta_page.dart';
 import 'package:aprende_wallet_app/pages/Perfil/perfil_page.dart';
+import 'package:aprende_wallet_app/pages/Perfil/perfil_controller.dart';
 import 'package:aprende_wallet_app/pages/Agregar_Registro/agregar_registro_page.dart';
 import 'package:aprende_wallet_app/pages/ChatIA/page_chat.dart';
 import 'package:aprende_wallet_app/pages/Planificacion/planificacion_page.dart';
@@ -21,6 +22,8 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+
   runApp(const MainApp());
 }
 
@@ -34,21 +37,20 @@ class MainApp extends StatelessWidget {
 
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
-      themeMode: ThemeMode.light, // Forzar el modo claro para testear
+      themeMode: ThemeMode.light,
       theme: mt.light(),
       darkTheme: mt.dark(),
       highContrastTheme: mt.lightHighContrast(),
       highContrastDarkTheme: mt.darkHighContrast(),
 
-      // Agrega los delegates y locales soportados
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
       supportedLocales: const [
-        Locale('es'), // Español
-        Locale('en'), // Inglés
+        Locale('es'),
+        Locale('en'),
       ],
 
       initialRoute: '/login',
@@ -63,7 +65,8 @@ class MainApp extends StatelessWidget {
         '/agregar-registro': (context) => AgregarRegistroPage(),
         '/chat-ia': (context) => ChatPage(),
         '/planificacion': (context) => PlanificacionPage(),
-        '/splash_pagosplanificados': (context) => SplashPagosPlanificadosPage(),
+        '/splash_pagosplanificados': (context) =>
+            SplashPagosPlanificadosPage(),
         '/splash_presupuestos': (context) => SplashPresupuestosPage(),
         '/pagosplanificados': (context) => PagosPlanificadosPage(),
         '/presupuestos': (context) => PresupuestosPage(),

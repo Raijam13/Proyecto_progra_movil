@@ -42,6 +42,7 @@ class SignInController extends GetxController {
       } else if (usuario["id"] != null) {
         await prefs.setInt("user_id", usuario["id"]);
         print("✅ ID de usuario guardado: ${usuario["id"]}");
+        print("perfil cargado tras login");
       } else {
         print("⚠️ USUARIO NO TIENE ID");
       }

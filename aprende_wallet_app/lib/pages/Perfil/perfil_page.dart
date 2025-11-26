@@ -3,12 +3,11 @@ import 'package:get/get.dart';
 import 'perfil_controller.dart';
 
 class PerfilPage extends StatelessWidget {
-  final PerfilController control = Get.put(PerfilController());
-
   PerfilPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final PerfilController control = Get.put(PerfilController());
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
@@ -38,11 +37,11 @@ class PerfilPage extends StatelessWidget {
             const SizedBox(height: 20),
             _buildTitle(),
             const SizedBox(height: 30),
-            _buildProfileSection(context),
+            _buildProfileSection(context, control),
             const SizedBox(height: 30),
-            _buildInfoFields(context),
+            _buildInfoFields(context, control),
             const SizedBox(height: 30),
-            _buildLogoutButton(context),
+            _buildLogoutButton(context, control),
             const SizedBox(height: 40),
           ],
         ),
@@ -50,6 +49,9 @@ class PerfilPage extends StatelessWidget {
     );
   }
 
+  // -------------------------
+  // SECCIÓN 1: TÍTULO
+  // -------------------------
   Widget _buildTitle() {
     return const Padding(
       padding: EdgeInsets.symmetric(horizontal: 24),
@@ -63,7 +65,10 @@ class PerfilPage extends StatelessWidget {
     );
   }
 
-  Widget _buildProfileSection(BuildContext context) {
+  // -------------------------
+  // SECCIÓN 2: FOTO + NOMBRE
+  // -------------------------
+  Widget _buildProfileSection(BuildContext context, PerfilController control) {
     return Container(
       color: Colors.white,
       padding: const EdgeInsets.all(24),
@@ -172,7 +177,10 @@ class PerfilPage extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoFields(BuildContext context) {
+  // -------------------------
+  // SECCIÓN 3: DATOS
+  // -------------------------
+  Widget _buildInfoFields(BuildContext context, PerfilController control) {
     return Container(
       color: Colors.white,
       child: Column(
@@ -272,7 +280,10 @@ class PerfilPage extends StatelessWidget {
     );
   }
 
-  Widget _buildLogoutButton(BuildContext context) {
+  // -------------------------
+  // SECCIÓN 4: LOGOUT
+  // -------------------------
+  Widget _buildLogoutButton(BuildContext context, PerfilController control) {
     return InkWell(
       onTap: () => control.cerrarSesion(context),
       child: Container(

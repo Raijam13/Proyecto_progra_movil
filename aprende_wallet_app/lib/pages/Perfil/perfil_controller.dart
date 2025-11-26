@@ -16,20 +16,22 @@ class PerfilController extends GetxController {
   final fechaNacimiento = ''.obs;
   final imagenPerfil = ''.obs;
 
-  String userId = ""; // ← dinámico desde SharedPreferences
+  String userId = ""; // ← cargado dinámicamente desde SharedPreferences
 
   @override
   void onInit() {
     super.onInit();
-    cargarUserId(); // ← primero obtenemos el ID, luego se carga el perfil
+    Future.microtask(() async {
+      await cargarUserId();
+      await cargarPerfil();
+    });
   }
 
-  // --------------------------------
-  // 1) CARGAR ID DEL USUARIO
-  // --------------------------------
+  // ============================
+  //      CARGAR ID
+  // ============================
   Future<void> cargarUserId() async {
     final prefs = await SharedPreferences.getInstance();
-
     final idGuardado = prefs.getInt("user_id");
 
     if (idGuardado == null) {
@@ -38,14 +40,13 @@ class PerfilController extends GetxController {
     }
 
     userId = idGuardado.toString();
-    print("✅ ID cargado en PerfilController: $userId");
+    print("✅ ID cargado: $userId");
 
-    cargarPerfil();
   }
 
-  // ------------------------------
-  //   OBTENER DATOS DEL PERFIL
-  // ------------------------------
+  // ============================
+  //      CARGAR PERFIL
+  // ============================
   Future<void> cargarPerfil() async {
     try {
       if (userId.isEmpty) return;
@@ -56,27 +57,30 @@ class PerfilController extends GetxController {
       nombre.value = usuario["nombres"] ?? "";
       apellido.value = usuario["apellidos"] ?? "";
       email.value = usuario["correo"] ?? "";
+      genero.value = usuario["genero"] ?? "";
+      fechaNacimiento.value = usuario["fecha_nacimiento"] ?? "";
       imagenPerfil.value = usuario["imagen_perfil"] ?? "";
+
     } catch (e) {
-      print("Error cargando perfil: $e");
+      print("❌ Error cargando perfil: $e");
     }
   }
 
-  // ------------------------------
-  //    ACTUALIZAR CAMPO ÚNICO
-  // ------------------------------
+  // ============================
+  //  ACTUALIZAR CAMPO INDIVIDUAL
+  // ============================
   Future<void> actualizarCampo(String campo, String valor) async {
     try {
       await perfilService.actualizarPerfil(userId, {campo: valor});
       await cargarPerfil();
     } catch (e) {
-      print("Error actualizando campo: $e");
+      print("❌ Error al actualizar $campo: $e");
     }
   }
 
-  // ------------------------------
-  //    ACTUALIZAR IMAGEN DE PERFIL
-  // ------------------------------
+  // ============================
+  //   ACTUALIZAR IMAGEN
+  // ============================
   Future<void> actualizarImagen(File imagen) async {
     try {
       final result =
@@ -84,13 +88,10 @@ class PerfilController extends GetxController {
 
       imagenPerfil.value = result["imagen_url"];
     } catch (e) {
-      print("Error al actualizar imagen: $e");
+      print("❌ Error al actualizar imagen: $e");
     }
   }
 
-  // ------------------------------
-  //      BOTÓN SELECCIONAR FOTO
-  // ------------------------------
   Future<void> editPhoto() async {
     final picker = ImagePicker();
     final picked = await picker.pickImage(source: ImageSource.gallery);
@@ -100,9 +101,9 @@ class PerfilController extends GetxController {
     }
   }
 
-  // ------------------------------
-  //         EDITAR CAMPOS
-  // ------------------------------
+  // ============================
+  //   EDITAR CAMPOS DE TEXTO
+  // ============================
   Future<void> editNombre(BuildContext context) async {
     _editarTexto(context, "Editar Nombre", nombre.value, (nuevo) {
       actualizarCampo("nombres", nuevo);
@@ -121,9 +122,9 @@ class PerfilController extends GetxController {
     });
   }
 
-  // ------------------------------
-  //      CAMPOS ESPECIALES
-  // ------------------------------
+  // ============================
+  //       EDITAR GÉNERO
+  // ============================
   void selectGenero(BuildContext context) {
     showDialog(
       context: context,
@@ -136,6 +137,7 @@ class PerfilController extends GetxController {
               title: Text("Masculino"),
               onTap: () {
                 genero.value = "Masculino";
+                actualizarCampo("genero", "Masculino");
                 Navigator.pop(context);
               },
             ),
@@ -143,6 +145,7 @@ class PerfilController extends GetxController {
               title: Text("Femenino"),
               onTap: () {
                 genero.value = "Femenino";
+                actualizarCampo("genero", "Femenino");
                 Navigator.pop(context);
               },
             ),
@@ -152,9 +155,9 @@ class PerfilController extends GetxController {
     );
   }
 
-  // ------------------------------
-  //   SELECCIONAR FECHA DE NACIMIENTO
-  // ------------------------------
+  // ============================
+  //    EDITAR FECHA DE NACIMIENTO
+  // ============================
   Future<void> selectFechaNacimiento(BuildContext context) async {
     DateTime? picked = await showDatePicker(
       context: context,
@@ -164,28 +167,31 @@ class PerfilController extends GetxController {
     );
 
     if (picked != null) {
-      fechaNacimiento.value = "${picked.year}-${picked.month}-${picked.day}";
-      actualizarCampo("fecha_nacimiento", fechaNacimiento.value);
+      final fecha = "${picked.year}-${picked.month}-${picked.day}";
+      fechaNacimiento.value = fecha;
+      actualizarCampo("fecha_nacimiento", fecha);
     }
   }
 
-  // ------------------------------
-  //     CERRAR SESIÓN
-  // ------------------------------
-  void cerrarSesion(BuildContext context) {
-    Navigator.pushReplacementNamed(context, "/login");
+  // ============================
+  //   CERRAR SESIÓN
+  // ============================
+  void cerrarSesion(BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+
+    // 🔥 Limpia todos los datos almacenados
+    await prefs.clear();
+
+    // 🔥 Elimina el controlador de memoria
+    Get.delete<PerfilController>();
+
+    // 🔄 Redirige al login
+    Navigator.pushNamedAndRemoveUntil(context, "/login", (_) => false);
   }
 
-  // ------------------------------
-  //    VOLVER ATRÁS
-  // ------------------------------
-  void goBack(BuildContext context) {
-    Navigator.pop(context);
-  }
-
-  // ------------------------------
-  //   DIÁLOGO EDITAR TEXTO
-  // ------------------------------
+  // ============================
+  //  DIÁLOGO EDITAR TEXTO GENÉRICO
+  // ============================
   void _editarTexto(
       BuildContext context, String titulo, String valorInicial, Function(String) onSave) {
     TextEditingController controller =
@@ -201,18 +207,21 @@ class PerfilController extends GetxController {
         ),
         actions: [
           TextButton(
-            child: Text("Cancelar"),
-            onPressed: () => Navigator.pop(context),
-          ),
+              child: Text("Cancelar"),
+              onPressed: () => Navigator.pop(context)),
           TextButton(
-            child: Text("Guardar"),
-            onPressed: () {
-              onSave(controller.text);
-              Navigator.pop(context);
-            },
-          ),
+              child: Text("Guardar"),
+              onPressed: () {
+                onSave(controller.text);
+                Navigator.pop(context);
+              }),
         ],
       ),
     );
   }
+
+  // ============================
+  //     VOLVER ATRÁS
+  // ============================
+  void goBack(BuildContext context) => Navigator.pop(context);
 }

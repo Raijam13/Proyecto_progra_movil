@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 import '../../Services/cuentas_service.dart';
 import '../../Services/registros_service.dart';
 import '../../Services/dashboard_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 
 class HomeController extends GetxController {
   // Controla si se muestra la lista completa de registros
@@ -12,7 +14,9 @@ class HomeController extends GetxController {
   // Loading state
   RxBool isLoading = false.obs;
   // User ID (hardcodeado por ahora, debería venir de sesión)
-  final int userId = 1;
+  //final int userId = 1;
+  late int userId;
+
 
   // Lista de cuentas (ahora desde el backend)
   RxList<Map<String, dynamic>> accounts = <Map<String, dynamic>>[].obs;
@@ -24,10 +28,25 @@ class HomeController extends GetxController {
   RxDouble totalBalance = 0.0.obs;
 
   @override
-  void onInit() {
-    super.onInit();
+void onInit() {
+  super.onInit();
+  _initUserId();
+}
+
+  Future<void> _initUserId() async {
+    final prefs = await SharedPreferences.getInstance();
+    userId = prefs.getInt("user_id") ?? 0;
+
+    print("🔍 HomeController — userId cargado: $userId");
+
+    if (userId == 0) {
+      print("⚠️ No hay userId. Usuario no ha iniciado sesión.");
+      return;
+    }
+
     cargarDatos();
   }
+
 
   // Cargar todos los datos del backend
   Future<void> cargarDatos() async {
