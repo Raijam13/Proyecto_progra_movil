@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../Services/perfil_service.dart';
+import '../ChatIA/page_chat_controller.dart';
 
 class PerfilController extends GetxController {
   final PerfilService perfilService = PerfilService();
@@ -184,9 +185,13 @@ class PerfilController extends GetxController {
 
     // 🔥 Elimina el controlador de memoria
     Get.delete<PerfilController>();
+    Get.find<ChatController>().clearMessages();
+    Get.delete<ChatController>();
 
     // 🔄 Redirige al login
     Navigator.pushNamedAndRemoveUntil(context, "/login", (_) => false);
+
+
   }
 
   // ============================

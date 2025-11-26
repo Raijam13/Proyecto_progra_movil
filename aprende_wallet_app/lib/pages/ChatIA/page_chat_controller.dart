@@ -45,4 +45,9 @@ class ChatController extends GetxController {
       });
     }
   }
+
+  void clearMessages() {
+    messages.clear();
+  }
+
 }
