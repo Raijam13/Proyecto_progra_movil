@@ -35,30 +35,33 @@ class AgregarPagoPlanificadoController extends GetxController {
 
   Future<int> _getUserId() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getInt('user_id') ?? 0;
+    return prefs.getInt('user_id') ?? -1;
   }
 
-  void fetchCatalogos() async {
+  Future<void> fetchCatalogos() async {
     try {
       isLoading(true);
       final userId = await _getUserId();
-      if (userId == 0) {
-        Get.snackbar('Error', 'Usuario no identificado');
-        return;
-      }
+      print(">>> DEBUG: fetchCatalogos userId: $userId");
       var response = await _pagosService.getCatalogos(userId);
+      print(">>> DEBUG: fetchCatalogos success: ${response.success}");
+      print(">>> DEBUG: fetchCatalogos data: ${response.data}");
+
       if (response.success && response.data != null) {
-        // Safe assignment handling potential nulls or empty lists
         categoriasList.assignAll(response.data!['categorias'] ?? []);
         frecuenciasList.assignAll(response.data!['frecuencias'] ?? []);
         cuentasList.assignAll(response.data!['cuentas'] ?? []);
         tiposPagoList.assignAll(response.data!['tipos_pago'] ?? []);
+
+        print(">>> DEBUG: categoriasList: $categoriasList");
+        print(">>> DEBUG: cuentasList: $cuentasList");
 
         // Set defaults if available
         if (frecuenciasList.isNotEmpty) {
           periodo.value = frecuenciasList.first['nombre'];
         }
       } else {
+        print(">>> DEBUG: Failed to load catalogs or data is null");
         Get.snackbar('Error', 'No se pudieron cargar los catálogos');
       }
     } catch (e) {

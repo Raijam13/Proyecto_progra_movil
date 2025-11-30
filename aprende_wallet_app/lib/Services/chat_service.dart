@@ -18,9 +18,17 @@ class ChatService {
 
       if (response.statusCode == 200) {
         final body = jsonDecode(response.body);
-        return body["respuesta"] ?? "Sin respuesta";
+        // Backend might return { "respuesta": "..." } or { "success": true, "data": { ... } }
+        if (body.containsKey("respuesta")) {
+          return body["respuesta"];
+        } else if (body.containsKey("data") &&
+            body["data"] is Map &&
+            body["data"].containsKey("respuesta")) {
+          return body["data"]["respuesta"];
+        }
+        return "Respuesta no entendible del servidor";
       } else {
-        return "Error: ${response.body}";
+        return "Error: ${response.statusCode}";
       }
     } catch (e) {
       return "Error al conectar con el servidor";

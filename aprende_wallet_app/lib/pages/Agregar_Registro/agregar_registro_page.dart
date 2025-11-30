@@ -8,7 +8,10 @@ import 'registro_modals/seleccionar_categoria.dart';
 // Formatea la fecha y hora para mostrar en la UI tipo "hoy, 10:09 a. m."
 String _formatFechaHora(DateTime dateTime, BuildContext context) {
   final now = DateTime.now();
-  final isToday = dateTime.year == now.year && dateTime.month == now.month && dateTime.day == now.day;
+  final isToday =
+      dateTime.year == now.year &&
+      dateTime.month == now.month &&
+      dateTime.day == now.day;
   final dateLabel = isToday
       ? 'hoy'
       : MaterialLocalizations.of(context).formatShortMonthDay(dateTime);
@@ -19,69 +22,99 @@ String _formatFechaHora(DateTime dateTime, BuildContext context) {
 class AgregarRegistroPage extends StatelessWidget {
   AgregarRegistroPage({super.key});
 
-  final AgregarRegistroController control = Get.put(AgregarRegistroController());
+  final AgregarRegistroController control = Get.put(
+    AgregarRegistroController(),
+  );
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[50],
-      body: Obx(() => Column(
-        children: [
-          Container(
-            color: control.tipo.value == 'Gasto' ? Colors.red[400] : Colors.green[400],
-            child: SafeArea(
-              bottom: false,
+      body: Obx(
+        () => Column(
+          children: [
+            Container(
+              color: control.tipo.value == 'Gasto'
+                  ? Colors.red[400]
+                  : Colors.green[400],
+              child: SafeArea(
+                bottom: false,
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          TextButton(
+                            onPressed: () {
+                              control.tipo.value = 'Gasto';
+                              control.moneda.value = 'PEN';
+                              control.monto.value = 0.0;
+                              control.cuenta.value = '';
+                              control.categoria.value = '';
+                              control.fechaHora.value = DateTime.now();
+                              Navigator.pop(context);
+                            },
+                            child: const Text(
+                              'Cancelar',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          const Text(
+                            'Agregar registro',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                            ),
+                          ),
+                          const SizedBox(width: 80),
+                        ],
+                      ),
+                    ),
+                    _buildTipoSelector(context),
+                    _buildMontoYMoneda(context),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 8),
+            Container(
+              width: double.infinity,
+              margin: const EdgeInsets.only(top: 12, left: 0, right: 0),
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              color: Colors.white,
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        TextButton(
-                          onPressed: () {
-                            control.tipo.value = 'Gasto';
-                            control.moneda.value = 'PEN';
-                            control.monto.value = 0.0;
-                            control.cuenta.value = '';
-                            control.categoria.value = '';
-                            control.fechaHora.value = DateTime.now();
-                            Navigator.pop(context);
-                          },
-                          child: const Text('Cancelar', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                        ),
-                        const Text('Agregar registro', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18)),
-                        const SizedBox(width: 80),
-                      ],
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                    child: Text(
+                      'GENERAL',
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: Colors.grey,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1,
+                      ),
                     ),
                   ),
-                  _buildTipoSelector(context),
-                  _buildMontoYMoneda(context),
+                  _buildGeneralSection(context),
                 ],
               ),
             ),
-          ),
-          const SizedBox(height: 8),
-          Container(
-            width: double.infinity,
-            margin: const EdgeInsets.only(top: 12, left: 0, right: 0),
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            color: Colors.white,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                  child: Text('GENERAL', style: TextStyle(fontSize: 13, color: Colors.grey, fontWeight: FontWeight.bold, letterSpacing: 1)),
-                ),
-                _buildGeneralSection(context),
-              ],
-            ),
-          ),
-          const Spacer(),
-          _buildGuardarButton(context),
-        ],
-      )),
+            const Spacer(),
+            _buildGuardarButton(context),
+          ],
+        ),
+      ),
     );
   }
 
@@ -100,28 +133,32 @@ class AgregarRegistroPage extends StatelessWidget {
   }
 
   Widget _buildTipoButton(String tipo, Color color) {
-    return Obx(() => GestureDetector(
-      onTap: () => control.setTipo(tipo),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-        decoration: BoxDecoration(
-          color: control.tipo.value == tipo ? Colors.white : color.withOpacity(0.2),
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: control.tipo.value == tipo ? color : Colors.transparent,
-            width: 2,
+    return Obx(
+      () => GestureDetector(
+        onTap: () => control.setTipo(tipo),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+          decoration: BoxDecoration(
+            color: control.tipo.value == tipo
+                ? Colors.white
+                : color.withOpacity(0.2),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: control.tipo.value == tipo ? color : Colors.transparent,
+              width: 2,
+            ),
           ),
-        ),
-        child: Text(
-          tipo,
-          style: TextStyle(
-            color: control.tipo.value == tipo ? color : Colors.white,
-            fontWeight: FontWeight.bold,
-            fontSize: 16,
+          child: Text(
+            tipo,
+            style: TextStyle(
+              color: control.tipo.value == tipo ? color : Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+            ),
           ),
         ),
       ),
-    ));
+    );
   }
 
   Widget _buildMontoYMoneda(BuildContext context) {
@@ -135,10 +172,16 @@ class AgregarRegistroPage extends StatelessWidget {
               color: Colors.white.withOpacity(0.2),
               borderRadius: BorderRadius.circular(8),
             ),
-            child: Obx(() => Text(
-              control.moneda.value,
-              style: const TextStyle(fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold),
-            )),
+            child: Obx(
+              () => Text(
+                control.moneda.value,
+                style: const TextStyle(
+                  fontSize: 18,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -149,14 +192,16 @@ class AgregarRegistroPage extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.end,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Obx(() => Text(
-                    control.tipo.value == 'Gasto' ? '-' : '+',
-                    style: const TextStyle(
-                      fontSize: 48,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
+                  Obx(
+                    () => Text(
+                      control.tipo.value == 'Gasto' ? '-' : '+',
+                      style: const TextStyle(
+                        fontSize: 48,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  )),
+                  ),
                   // Reduce spacing between sign and amount
                   const SizedBox(width: 1),
                   SizedBox(
@@ -167,10 +212,22 @@ class AgregarRegistroPage extends StatelessWidget {
                       decoration: const InputDecoration(
                         border: InputBorder.none,
                         hintText: '0.00',
-                        hintStyle: TextStyle(fontSize: 40, color: Colors.white54),
-                        contentPadding: EdgeInsets.only(left: 0, right: 0, top: 0, bottom: 0),
+                        hintStyle: TextStyle(
+                          fontSize: 40,
+                          color: Colors.white54,
+                        ),
+                        contentPadding: EdgeInsets.only(
+                          left: 0,
+                          right: 0,
+                          top: 0,
+                          bottom: 0,
+                        ),
                       ),
-                      style: const TextStyle(fontSize: 40, color: Colors.white, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                        fontSize: 40,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
                       onChanged: (value) {
                         final monto = double.tryParse(value) ?? 0.0;
                         control.setMonto(monto);
@@ -192,24 +249,30 @@ class AgregarRegistroPage extends StatelessWidget {
         _buildGeneralItem(
           icon: Icons.account_balance_wallet_outlined,
           label: 'Cuenta',
-          value: control.cuenta.value.isEmpty ? 'Requerido' : control.cuenta.value,
+          value: control.cuenta.value.isEmpty
+              ? 'Requerido'
+              : control.cuenta.value,
           valueColor: control.cuenta.value.isEmpty ? Colors.red : Colors.black,
           onTap: () async {
             await SeleccionarCuentaModal.show(
               context: context,
-              userId: control.userId,
+              // userId: control.userId, // Removed
               initialCuenta: control.cuenta.value,
               onSelect: (nombre, id) {
                 control.setCuenta(nombre, id: id);
               },
             );
           },
-  ),
+        ),
         _buildGeneralItem(
           icon: Icons.category_outlined,
           label: 'Categoría',
-          value: control.categoria.value.isEmpty ? 'Requerido' : control.categoria.value,
-          valueColor: control.categoria.value.isEmpty ? Colors.red : Colors.black,
+          value: control.categoria.value.isEmpty
+              ? 'Requerido'
+              : control.categoria.value,
+          valueColor: control.categoria.value.isEmpty
+              ? Colors.red
+              : Colors.black,
           onTap: () async {
             await SeleccionarCategoriaModal.show(
               context: context,
@@ -268,10 +331,7 @@ class AgregarRegistroPage extends StatelessWidget {
                 style: const TextStyle(fontSize: 16, color: Colors.black),
               ),
             ),
-            Text(
-              value,
-              style: TextStyle(fontSize: 16, color: valueColor),
-            ),
+            Text(value, style: TextStyle(fontSize: 16, color: valueColor)),
             const Icon(Icons.chevron_right, color: Colors.grey),
           ],
         ),
@@ -280,7 +340,10 @@ class AgregarRegistroPage extends StatelessWidget {
   }
 
   Widget _buildGuardarButton(BuildContext context) {
-    final isEnabled = control.cuenta.value.isNotEmpty && control.categoria.value.isNotEmpty && control.monto.value > 0;
+    final isEnabled =
+        control.cuenta.value.isNotEmpty &&
+        control.categoria.value.isNotEmpty &&
+        control.monto.value > 0;
     return Container(
       width: double.infinity,
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),

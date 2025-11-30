@@ -357,6 +357,202 @@ class HomePage extends StatelessWidget {
               );
             }),
           ),
+```
+                color: colorScheme.primary,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.add,
+                color: colorScheme.onPrimary,
+                size: 28,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              'Agregar cuenta',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 14,
+                color: colorScheme.onPrimary,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMainExpensesSection(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    final List<Map<String, dynamic>> gastos = [
+      {'categoria': 'Comida', 'monto': 120.50, 'fecha': '2025-10-10'},
+      {'categoria': 'Transporte', 'monto': 60.00, 'fecha': '2025-10-12'},
+      {'categoria': 'Entretenimiento', 'monto': 45.75, 'fecha': '2025-10-14'},
+    ];
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: colorScheme.surface,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'Gastos principales',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              IconButton(
+                onPressed: () => control.openExpensesMenu(),
+                icon: const Icon(Icons.more_horiz),
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'ESTE MES',
+            style: TextStyle(
+              fontSize: 12,
+              color: Colors.grey[600],
+              letterSpacing: 1.2,
+            ),
+          ),
+          const SizedBox(height: 16),
+          ...gastos.map((gasto) => Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      gasto['categoria'] as String,
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                    Text(
+                      'S/ ${(gasto['monto'] as num).toStringAsFixed(2)}',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ],
+                ),
+              )),
+          const SizedBox(height: 8),
+          Align(
+            alignment: Alignment.centerRight,
+            child: TextButton(
+              onPressed: () => control.showMoreExpenses(),
+              child: Text(
+                'Mostrar más',
+                style: TextStyle(
+                  color: colorScheme.primary,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRecentTransactionsSection(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: colorScheme.surface,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'Últimos registros',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              IconButton(
+                onPressed: () => control.openTransactionsMenu(),
+                icon: const Icon(Icons.more_horiz),
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Obx(
+            () {
+              final mostrarTodos = control.mostrarTodosRegistros.value;
+              final total = control.transactions.length;
+              final mostrar = mostrarTodos ? total : (total > 3 ? 3 : total);
+              final transaccionesOrdenadas = List<Map<String, dynamic>>.from(control.transactions);
+              transaccionesOrdenadas.sort((a, b) {
+                final dateA = a['dateTime'] as DateTime? ?? DateTime(1900);
+                final dateB = b['dateTime'] as DateTime? ?? DateTime(1900);
+                return dateB.compareTo(dateA);
+              });
+              return ListView.separated(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: mostrar,
+                separatorBuilder: (context, index) => const SizedBox(height: 12),
+                itemBuilder: (context, index) {
+                  return _buildTransactionItem(context, transaccionesOrdenadas[index]);
+                },
+              );
+            },
+          ),
+          const SizedBox(height: 16),
+          Align(
+            alignment: Alignment.centerRight,
+            child: Obx(() {
+              final total = control.transactions.length;
+              if (total <= 3) return const SizedBox.shrink();
+              return TextButton(
+                onPressed: () => control.showMoreTransactions(),
+                child: Text(
+                  control.mostrarTodosRegistros.value ? 'Mostrar menos' : 'Mostrar más',
+                  style: TextStyle(
+                    color: colorScheme.primary,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              );
+            }),
+          ),
         ],
       ),
     );
@@ -373,12 +569,12 @@ class HomePage extends StatelessWidget {
           width: 48,
           height: 48,
           decoration: BoxDecoration(
-            color: Color(transaction['color']).withOpacity(0.2),
+            color: Color(transaction['color'] ?? Colors.grey.value).withOpacity(0.2),
             shape: BoxShape.circle,
           ),
           child: Icon(
             isIncome ? Icons.arrow_downward : Icons.restaurant,
-            color: Color(transaction['color']),
+            color: Color(transaction['color'] ?? Colors.grey.value),
             size: 24,
           ),
         ),
@@ -427,3 +623,4 @@ class HomePage extends StatelessWidget {
     );
   }
 }
+```

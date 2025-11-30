@@ -24,7 +24,15 @@ class CuentasService {
       );
 
       if (response.statusCode == 200) {
-        final List<dynamic> data = json.decode(response.body);
+        final dynamic decoded = json.decode(response.body);
+        List<dynamic> data;
+        if (decoded is Map<String, dynamic> && decoded.containsKey('data')) {
+          data = decoded['data'];
+        } else if (decoded is List) {
+          data = decoded;
+        } else {
+          data = [];
+        }
         return data.cast<Map<String, dynamic>>();
       } else if (response.statusCode == 400) {
         throw Exception('Parámetro user_id es obligatorio');

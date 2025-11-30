@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../Services/cuentas_service.dart';
 
 class CuentaItem {
@@ -7,7 +8,7 @@ class CuentaItem {
   final IconData icono;
   final double saldo;
   final String moneda;
-  
+
   CuentaItem({
     required this.id,
     required this.nombre,
@@ -22,20 +23,23 @@ class SeleccionarCuentaModal {
   static IconData _getIconForAccount(String tipo) {
     final tipoLower = tipo.toLowerCase();
     if (tipoLower.contains('efectivo')) return Icons.attach_money;
-    if (tipoLower.contains('banco') || tipoLower.contains('corriente')) return Icons.account_balance;
-    if (tipoLower.contains('crédito') || tipoLower.contains('credito')) return Icons.credit_card;
+    if (tipoLower.contains('banco') || tipoLower.contains('corriente'))
+      return Icons.account_balance;
+    if (tipoLower.contains('crédito') || tipoLower.contains('credito'))
+      return Icons.credit_card;
     if (tipoLower.contains('ahorro')) return Icons.savings;
-    if (tipoLower.contains('inversión') || tipoLower.contains('inversion')) return Icons.scatter_plot;
-    if (tipoLower.contains('préstamo') || tipoLower.contains('prestamo')) return Icons.attach_money;
+    if (tipoLower.contains('inversión') || tipoLower.contains('inversion'))
+      return Icons.scatter_plot;
+    if (tipoLower.contains('préstamo') || tipoLower.contains('prestamo'))
+      return Icons.attach_money;
     if (tipoLower.contains('hipoteca')) return Icons.home;
     return Icons.account_balance_wallet; // Icono por defecto
   }
 
   static Future<void> show({
     required BuildContext context,
-    required Function(String nombre, int id) onSelect, // Ahora devuelve nombre e id
+    required Function(String nombre, int id) onSelect,
     String? initialCuenta,
-    required int userId,
   }) async {
     await showModalBottomSheet(
       context: context,
@@ -48,7 +52,6 @@ class SeleccionarCuentaModal {
         return _SeleccionarCuentaContent(
           onSelect: onSelect,
           initialCuenta: initialCuenta,
-          userId: userId,
         );
       },
     );
@@ -58,16 +61,12 @@ class SeleccionarCuentaModal {
 class _SeleccionarCuentaContent extends StatefulWidget {
   final Function(String nombre, int id) onSelect;
   final String? initialCuenta;
-  final int userId;
 
-  const _SeleccionarCuentaContent({
-    required this.onSelect,
-    this.initialCuenta,
-    required this.userId,
-  });
+  const _SeleccionarCuentaContent({required this.onSelect, this.initialCuenta});
 
   @override
-  State<_SeleccionarCuentaContent> createState() => _SeleccionarCuentaContentState();
+  State<_SeleccionarCuentaContent> createState() =>
+      _SeleccionarCuentaContentState();
 }
 
 class _SeleccionarCuentaContentState extends State<_SeleccionarCuentaContent> {
@@ -83,7 +82,18 @@ class _SeleccionarCuentaContentState extends State<_SeleccionarCuentaContent> {
 
   Future<void> _cargarCuentas() async {
     try {
-      final response = await CuentasService.listarCuentas(widget.userId);
+      final prefs = await SharedPreferences.getInstance();
+      final userId = prefs.getInt('user_id') ?? -1;
+
+      if (userId == -1) {
+        setState(() {
+          errorMessage = 'Usuario no identificado';
+          isLoading = false;
+        });
+        return;
+      }
+
+      final response = await CuentasService.listarCuentas(userId);
       setState(() {
         cuentas = response.map((c) {
           return CuentaItem(
@@ -91,7 +101,9 @@ class _SeleccionarCuentaContentState extends State<_SeleccionarCuentaContent> {
             nombre: c['name'] as String,
             saldo: (c['amount'] as num).toDouble(),
             moneda: c['currency'] as String? ?? 'PEN',
-            icono: SeleccionarCuentaModal._getIconForAccount(c['type'] as String? ?? ''),
+            icono: SeleccionarCuentaModal._getIconForAccount(
+              c['type'] as String? ?? '',
+            ),
           );
         }).toList();
         isLoading = false;
@@ -119,7 +131,10 @@ class _SeleccionarCuentaContentState extends State<_SeleccionarCuentaContent> {
                   onPressed: () => Navigator.pop(context),
                 ),
                 const SizedBox(width: 8),
-                const Text('Cuentas', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                const Text(
+                  'Cuentas',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
               ],
             ),
           ),
@@ -149,7 +164,11 @@ class _SeleccionarCuentaContentState extends State<_SeleccionarCuentaContent> {
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 children: [
-                  Icon(Icons.account_balance_wallet_outlined, size: 48, color: Colors.grey[400]),
+                  Icon(
+                    Icons.account_balance_wallet_outlined,
+                    size: 48,
+                    color: Colors.grey[400],
+                  ),
                   const SizedBox(height: 16),
                   Text(
                     'No tienes cuentas creadas',
@@ -167,7 +186,10 @@ class _SeleccionarCuentaContentState extends State<_SeleccionarCuentaContent> {
                   final cuenta = cuentas[index];
                   return ListTile(
                     leading: Icon(cuenta.icono, color: Colors.grey[600]),
-                    title: Text(cuenta.nombre, style: const TextStyle(fontSize: 16)),
+                    title: Text(
+                      cuenta.nombre,
+                      style: const TextStyle(fontSize: 16),
+                    ),
                     subtitle: Text(
                       '${cuenta.moneda} ${cuenta.saldo.toStringAsFixed(2)}',
                       style: TextStyle(fontSize: 14, color: Colors.grey[600]),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../Home/home_controller.dart';
 import '../../Services/registros_service.dart';
 import '../../Services/categorias_service.dart';
@@ -21,7 +22,8 @@ class AgregarRegistroController extends GetxController {
   RxBool isLoading = false.obs;
 
   // User ID (debería venir de sesión)
-  final int userId = 1;
+  // User ID (debería venir de sesión)
+  // final int userId = 1; // REMOVED HARDCODED
 
   // Listas de catálogos desde el backend
   RxList<Map<String, dynamic>> categorias = <Map<String, dynamic>>[].obs;
@@ -33,12 +35,22 @@ class AgregarRegistroController extends GetxController {
     cargarCatalogos();
   }
 
-  // Cargar catálogos del backend
+  Future<int> _getUserId() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getInt('user_id') ?? -1;
+  }
+
   Future<void> cargarCatalogos() async {
     try {
-      final catResponse = await CategoriasService.listarCategorias();
-      categorias.value = catResponse;
+      final userId = await _getUserId();
 
+      // Cargar categorías
+      final categoriasResponse = await CategoriasService.listarCategorias(
+        userId,
+      );
+      categorias.value = categoriasResponse;
+
+      // Cargar cuentas
       final cuentasResponse = await CuentasService.listarCuentas(userId);
       cuentas.value = cuentasResponse;
     } catch (e) {
@@ -108,7 +120,7 @@ class AgregarRegistroController extends GetxController {
 
       // Crear registro en el backend
       await RegistrosService.crearRegistro(
-        idUsuario: userId,
+        idUsuario: await _getUserId(),
         idCuenta: idCuenta.value,
         idCategoria: idCategoria.value,
         idTipoTransaccion: idTipoTransaccion,

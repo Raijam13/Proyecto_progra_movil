@@ -5,7 +5,6 @@ import '../../Services/registros_service.dart';
 import '../../Services/dashboard_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-
 class HomeController extends GetxController {
   // Controla si se muestra la lista completa de registros
   RxBool mostrarTodosRegistros = false.obs;
@@ -17,7 +16,6 @@ class HomeController extends GetxController {
   //final int userId = 1;
   late int userId;
 
-
   // Lista de cuentas (ahora desde el backend)
   RxList<Map<String, dynamic>> accounts = <Map<String, dynamic>>[].obs;
 
@@ -28,28 +26,36 @@ class HomeController extends GetxController {
   RxDouble totalBalance = 0.0.obs;
 
   @override
-void onInit() {
-  super.onInit();
-  _initUserId();
-}
-
-  Future<void> _initUserId() async {
-    final prefs = await SharedPreferences.getInstance();
-    userId = prefs.getInt("user_id") ?? 0;
-
-    print("🔍 HomeController — userId cargado: $userId");
-
-    if (userId == 0) {
-      print("⚠️ No hay userId. Usuario no ha iniciado sesión.");
-      return;
-    }
-
-    cargarDatos();
+  void onInit() {
+    super.onInit();
+    _initUserId();
   }
 
+  Future<void> _initUserId() async {
+    await refreshUser();
+  }
+
+  Future<void> refreshUser() async {
+    final prefs = await SharedPreferences.getInstance();
+    int? id = prefs.getInt('user_id');
+
+    // Retry mechanism for race conditions
+    if (id == null || id == -1) {
+      await Future.delayed(const Duration(milliseconds: 500));
+      id = prefs.getInt('user_id');
+    }
+
+    userId = id ?? -1;
+    print("HomeController initialized with userId: $userId");
+
+    if (userId != -1) {
+      cargarDatos();
+    }
+  }
 
   // Cargar todos los datos del backend
   Future<void> cargarDatos() async {
+    if (userId == -1) return;
     isLoading.value = true;
     try {
       await Future.wait([
@@ -71,40 +77,21 @@ void onInit() {
     }
   }
 
-  // Cargar cuentas desde el backend
   Future<void> cargarCuentas() async {
     try {
-      final cuentas = await CuentasService.listarCuentas(userId);
-      accounts.value = cuentas;
+      final data = await CuentasService.listarCuentas(userId);
+      accounts.value = data;
     } catch (e) {
-      print('Error al cargar cuentas: $e');
-      rethrow;
+      print("Error cargando cuentas: $e");
     }
   }
 
-  // Cargar registros desde el backend
   Future<void> cargarRegistros() async {
     try {
-      final registros = await RegistrosService.listarRegistros(
-        userId: userId,
-        limit: 20,
-        offset: 0,
-      );
-      // Convertir formato del backend al formato usado en el front
-      transactions.value = registros.map((r) {
-        return {
-          'id': r['id'],
-          'title': r['category'] ?? 'Sin categoría',
-          'subtitle': r['subtitle'] ?? '',
-          'amount': (r['amount'] as num).toDouble(),
-          'date': r['date'] ?? 'hoy',
-          'type': r['type'] ?? 'expense',
-          'color': r['type'] == 'ingreso' ? 0xFF43A047 : 0xFFEF5350,
-        };
-      }).toList();
+      final data = await RegistrosService.listarRegistros(userId: userId);
+      transactions.value = data;
     } catch (e) {
-      print('Error al cargar registros: $e');
-      rethrow;
+      print("Error cargando registros: $e");
     }
   }
 
@@ -140,7 +127,9 @@ void onInit() {
 
   String _formatDate(DateTime date) {
     final now = DateTime.now();
-    if (date.year == now.year && date.month == now.month && date.day == now.day) {
+    if (date.year == now.year &&
+        date.month == now.month &&
+        date.day == now.day) {
       return 'hoy';
     }
     // Ejemplo: 5 de octubre
@@ -149,8 +138,19 @@ void onInit() {
 
   String _nombreMes(int mes) {
     const nombres = [
-      '', 'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
-      'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'
+      '',
+      'enero',
+      'febrero',
+      'marzo',
+      'abril',
+      'mayo',
+      'junio',
+      'julio',
+      'agosto',
+      'septiembre',
+      'octubre',
+      'noviembre',
+      'diciembre',
     ];
     return nombres[mes];
   }
@@ -165,13 +165,13 @@ void onInit() {
 
     if (index == 1) {
       Navigator.pushReplacementNamed(context, '/planificacion');
-    } 
+    }
     // Navegación al presionar el botón central (+)
     if (index == 2) {
       Navigator.pushNamed(context, '/agregar-registro');
     }
 
-    if (index == 3){
+    if (index == 3) {
       Navigator.pushReplacementNamed(context, '/chat-ia');
       return;
     }
@@ -193,7 +193,7 @@ void onInit() {
 
   // Método para mostrar más transacciones
   void showMoreTransactions() {
-  mostrarTodosRegistros.value = !mostrarTodosRegistros.value;
+    mostrarTodosRegistros.value = !mostrarTodosRegistros.value;
   }
 
   // Método para abrir menú de gastos principales

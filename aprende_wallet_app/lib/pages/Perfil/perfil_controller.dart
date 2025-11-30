@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../Services/perfil_service.dart';
 import '../ChatIA/page_chat_controller.dart';
+import '../Home/home_controller.dart';
 
 class PerfilController extends GetxController {
   final PerfilService perfilService = PerfilService();
@@ -42,7 +43,6 @@ class PerfilController extends GetxController {
 
     userId = idGuardado.toString();
     print("✅ ID cargado: $userId");
-
   }
 
   // ============================
@@ -53,7 +53,21 @@ class PerfilController extends GetxController {
       if (userId.isEmpty) return;
 
       final data = await perfilService.obtenerPerfil(userId);
-      final usuario = data["usuario"];
+      Map<String, dynamic> usuario;
+
+      if (data.containsKey("usuario")) {
+        usuario = data["usuario"];
+      } else if (data.containsKey("data") && data["data"] is Map) {
+        // Si viene dentro de 'data' (formato GenericResponse)
+        final innerData = data["data"];
+        if (innerData.containsKey("usuario")) {
+          usuario = innerData["usuario"];
+        } else {
+          usuario = innerData; // Asumimos que data ES el usuario
+        }
+      } else {
+        usuario = data; // Fallback
+      }
 
       nombre.value = usuario["nombres"] ?? "";
       apellido.value = usuario["apellidos"] ?? "";
@@ -61,7 +75,6 @@ class PerfilController extends GetxController {
       genero.value = usuario["genero"] ?? "";
       fechaNacimiento.value = usuario["fecha_nacimiento"] ?? "";
       imagenPerfil.value = usuario["imagen_perfil"] ?? "";
-
     } catch (e) {
       print("❌ Error cargando perfil: $e");
     }
@@ -84,8 +97,7 @@ class PerfilController extends GetxController {
   // ============================
   Future<void> actualizarImagen(File imagen) async {
     try {
-      final result =
-          await perfilService.actualizarImagen(userId, imagen.path);
+      final result = await perfilService.actualizarImagen(userId, imagen.path);
 
       imagenPerfil.value = result["imagen_url"];
     } catch (e) {
@@ -185,22 +197,31 @@ class PerfilController extends GetxController {
 
     // 🔥 Elimina el controlador de memoria
     Get.delete<PerfilController>();
-    Get.find<ChatController>().clearMessages();
-    Get.delete<ChatController>();
+    // Forzar eliminación de HomeController para evitar datos estancados
+    if (Get.isRegistered<HomeController>()) {
+      Get.delete<HomeController>(force: true);
+    }
+    if (Get.isRegistered<ChatController>()) {
+      Get.find<ChatController>().clearMessages();
+      Get.delete<ChatController>();
+    }
 
     // 🔄 Redirige al login
     Navigator.pushNamedAndRemoveUntil(context, "/login", (_) => false);
-
-
   }
 
   // ============================
   //  DIÁLOGO EDITAR TEXTO GENÉRICO
   // ============================
   void _editarTexto(
-      BuildContext context, String titulo, String valorInicial, Function(String) onSave) {
-    TextEditingController controller =
-        TextEditingController(text: valorInicial);
+    BuildContext context,
+    String titulo,
+    String valorInicial,
+    Function(String) onSave,
+  ) {
+    TextEditingController controller = TextEditingController(
+      text: valorInicial,
+    );
 
     showDialog(
       context: context,
@@ -212,14 +233,16 @@ class PerfilController extends GetxController {
         ),
         actions: [
           TextButton(
-              child: Text("Cancelar"),
-              onPressed: () => Navigator.pop(context)),
+            child: Text("Cancelar"),
+            onPressed: () => Navigator.pop(context),
+          ),
           TextButton(
-              child: Text("Guardar"),
-              onPressed: () {
-                onSave(controller.text);
-                Navigator.pop(context);
-              }),
+            child: Text("Guardar"),
+            onPressed: () {
+              onSave(controller.text);
+              Navigator.pop(context);
+            },
+          ),
         ],
       ),
     );

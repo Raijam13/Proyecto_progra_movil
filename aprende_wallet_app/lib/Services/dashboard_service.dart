@@ -38,7 +38,11 @@ class DashboardService {
       );
 
       if (response.statusCode == 200) {
-        return json.decode(response.body);
+        final dynamic decoded = json.decode(response.body);
+        if (decoded is Map<String, dynamic> && decoded.containsKey('data')) {
+          return decoded['data'];
+        }
+        return decoded;
       } else if (response.statusCode == 400) {
         throw Exception('Parámetro user_id es obligatorio');
       } else {
@@ -60,7 +64,11 @@ class DashboardService {
       );
 
       if (response.statusCode == 200) {
-        return json.decode(response.body);
+        final dynamic decoded = json.decode(response.body);
+        if (decoded is Map<String, dynamic> && decoded.containsKey('data')) {
+          return decoded['data'];
+        }
+        return decoded;
       } else if (response.statusCode == 400) {
         throw Exception('Parámetro user_id es obligatorio');
       } else {

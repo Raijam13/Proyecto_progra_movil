@@ -14,7 +14,11 @@ class PerfilService {
       final response = await http.get(url);
 
       if (response.statusCode == 200) {
-        return jsonDecode(response.body);
+        final dynamic decoded = jsonDecode(response.body);
+        if (decoded is Map<String, dynamic> && decoded.containsKey('data')) {
+          return decoded['data'];
+        }
+        return decoded;
       } else {
         throw "Error al obtener perfil: ${response.body}";
       }

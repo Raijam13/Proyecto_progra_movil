@@ -17,15 +17,25 @@ class CategoriasService {
   }
 
   /// GET /categorias - Listar todas las categorías
-  static Future<List<Map<String, dynamic>>> listarCategorias() async {
+  static Future<List<Map<String, dynamic>>> listarCategorias(
+    int? userId,
+  ) async {
     try {
       final response = await http.get(
         Uri.parse('$baseUrl/categorias'),
-        headers: _getHeaders(),
+        headers: _getHeaders(userId: userId),
       );
 
       if (response.statusCode == 200) {
-        final List<dynamic> data = json.decode(response.body);
+        final dynamic decoded = json.decode(response.body);
+        List<dynamic> data;
+        if (decoded is Map<String, dynamic> && decoded.containsKey('data')) {
+          data = decoded['data'];
+        } else if (decoded is List) {
+          data = decoded;
+        } else {
+          data = [];
+        }
         return data.cast<Map<String, dynamic>>();
       } else {
         throw Exception('Error al listar categorías: ${response.statusCode}');
