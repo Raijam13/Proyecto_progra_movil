@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
+import 'package:aprende_wallet_app/config/api_config.dart';
+
 class TiposService {
-  static const String baseUrl = 'http://127.0.0.1:4567';
+  static const String baseUrl = ApiConfig.baseUrl;
 
   static Map<String, String> _getHeaders() {
     return {'Content-Type': 'application/json'};

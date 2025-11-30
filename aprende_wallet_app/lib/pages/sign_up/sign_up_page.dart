@@ -5,12 +5,10 @@ import 'sign_up_controller.dart';
 class SignUpPage extends StatelessWidget {
   final SignUpController control = Get.put(SignUpController());
 
-   SignUpPage({super.key});
+  SignUpPage({super.key});
 
   Widget _background(BuildContext context) {
-    return Container(
-      color: const Color(0xFFF9F9F9),
-    );
+    return Container(color: const Color(0xFFF9F9F9));
   }
 
   Widget _logoSection() {
@@ -93,7 +91,9 @@ class SignUpPage extends StatelessWidget {
           clipBehavior: Clip.antiAlias,
           decoration: ShapeDecoration(
             color: const Color(0xFFD4D4D4),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(7),
+            ),
           ),
           child: TextFormField(
             controller: control.firstName,
@@ -123,7 +123,9 @@ class SignUpPage extends StatelessWidget {
           clipBehavior: Clip.antiAlias,
           decoration: ShapeDecoration(
             color: const Color(0xFFD4D4D4),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(7),
+            ),
           ),
           child: TextFormField(
             controller: control.lastName,
@@ -262,7 +264,9 @@ class SignUpPage extends StatelessWidget {
             clipBehavior: Clip.antiAlias,
             decoration: ShapeDecoration(
               color: const Color(0xFF1B3A46),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(7),
+              ),
             ),
             child: const Center(
               child: Text(
@@ -380,9 +384,7 @@ class SignUpPage extends StatelessWidget {
       child: Stack(
         children: [
           _background(context),
-          Center(
-            child: _foreground(context),
-          ),
+          Center(child: _foreground(context)),
         ],
       ),
     );
@@ -391,7 +393,7 @@ class SignUpPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomInset: true,
       appBar: null,
       body: _buildBody(context),
     );

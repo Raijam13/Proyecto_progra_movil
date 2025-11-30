@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
+import 'package:aprende_wallet_app/config/api_config.dart';
+
 class PerfilService {
-  final String baseUrl = "http://127.0.0.1:4567";
+  final String baseUrl = ApiConfig.baseUrl;
 
   // Obtener perfil
   Future<Map<String, dynamic>> obtenerPerfil(String id) async {

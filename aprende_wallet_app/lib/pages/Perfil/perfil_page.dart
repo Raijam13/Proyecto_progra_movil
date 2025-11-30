@@ -17,17 +17,11 @@ class PerfilPage extends StatelessWidget {
         elevation: 0,
         leading: IconButton(
           onPressed: () => control.goBack(context),
-          icon: Icon(
-            Icons.arrow_back,
-            color: colorScheme.primary,
-          ),
+          icon: Icon(Icons.arrow_back, color: colorScheme.primary),
         ),
         title: Text(
           'Home',
-          style: TextStyle(
-            color: colorScheme.primary,
-            fontSize: 16,
-          ),
+          style: TextStyle(color: colorScheme.primary, fontSize: 16),
         ),
       ),
       body: SingleChildScrollView(
@@ -57,10 +51,7 @@ class PerfilPage extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: 24),
       child: Text(
         'Perfil',
-        style: TextStyle(
-          fontSize: 40,
-          fontWeight: FontWeight.bold,
-        ),
+        style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
       ),
     );
   }
@@ -77,19 +68,30 @@ class PerfilPage extends StatelessWidget {
         children: [
           Column(
             children: [
-              Container(
-                width: 100,
-                height: 100,
-                decoration: BoxDecoration(
-                  color: Colors.grey[300],
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  Icons.person,
-                  size: 50,
-                  color: Colors.grey[600],
-                ),
-              ),
+              Obx(() {
+                final imagePath = control.imagenPerfil.value;
+                return Container(
+                  width: 100,
+                  height: 100,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[300],
+                    shape: BoxShape.circle,
+                    image: imagePath.isNotEmpty
+                        ? DecorationImage(
+                            image: NetworkImage(
+                              imagePath.startsWith('http')
+                                  ? imagePath
+                                  : 'http://127.0.0.1:4567$imagePath',
+                            ),
+                            fit: BoxFit.cover,
+                          )
+                        : null,
+                  ),
+                  child: imagePath.isEmpty
+                      ? Icon(Icons.person, size: 50, color: Colors.grey[600])
+                      : null,
+                );
+              }),
               const SizedBox(height: 8),
               TextButton(
                 onPressed: () => control.editPhoto(),
@@ -113,19 +115,23 @@ class PerfilPage extends StatelessWidget {
           Expanded(
             child: Column(
               children: [
-                Obx(() => _buildInlineTextField(
-                      context: context,
-                      label: 'Nombre',
-                      value: control.nombre.value,
-                      onTap: () => control.editNombre(context),
-                    )),
+                Obx(
+                  () => _buildInlineTextField(
+                    context: context,
+                    label: 'Nombre',
+                    value: control.nombre.value,
+                    onTap: () => control.editNombre(context),
+                  ),
+                ),
                 const SizedBox(height: 20),
-                Obx(() => _buildInlineTextField(
-                      context: context,
-                      label: 'Apellido',
-                      value: control.apellido.value,
-                      onTap: () => control.editApellido(context),
-                    )),
+                Obx(
+                  () => _buildInlineTextField(
+                    context: context,
+                    label: 'Apellido',
+                    value: control.apellido.value,
+                    onTap: () => control.editApellido(context),
+                  ),
+                ),
               ],
             ),
           ),
@@ -147,10 +153,7 @@ class PerfilPage extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 8),
         decoration: BoxDecoration(
           border: Border(
-            bottom: BorderSide(
-              color: Colors.grey[300]!,
-              width: 1,
-            ),
+            bottom: BorderSide(color: Colors.grey[300]!, width: 1),
           ),
         ),
         child: Column(
@@ -158,10 +161,7 @@ class PerfilPage extends StatelessWidget {
           children: [
             Text(
               label,
-              style: TextStyle(
-                fontSize: 13,
-                color: Colors.grey[600],
-              ),
+              style: TextStyle(fontSize: 13, color: Colors.grey[600]),
             ),
             const SizedBox(height: 4),
             Text(
@@ -185,27 +185,33 @@ class PerfilPage extends StatelessWidget {
       color: Colors.white,
       child: Column(
         children: [
-          Obx(() => _buildTextField(
-                context: context,
-                label: 'Correo electrónico',
-                value: control.email.value,
-                onTap: () => control.editEmail(context),
-              )),
+          Obx(
+            () => _buildTextField(
+              context: context,
+              label: 'Correo electrónico',
+              value: control.email.value,
+              onTap: () => control.editEmail(context),
+            ),
+          ),
           const Divider(height: 1, thickness: 8, color: Color(0xFFF5F5F5)),
-          Obx(() => _buildTextField(
-                context: context,
-                label: 'Nacimiento',
-                value: control.fechaNacimiento.value,
-                onTap: () => control.selectFechaNacimiento(context),
-              )),
+          Obx(
+            () => _buildTextField(
+              context: context,
+              label: 'Nacimiento',
+              value: control.fechaNacimiento.value,
+              onTap: () => control.selectFechaNacimiento(context),
+            ),
+          ),
           _buildDivider(),
-          Obx(() => _buildTextField(
-                context: context,
-                label: 'Género',
-                value: control.genero.value,
-                onTap: () => control.selectGenero(context),
-                showArrow: true,
-              )),
+          Obx(
+            () => _buildTextField(
+              context: context,
+              label: 'Género',
+              value: control.genero.value,
+              onTap: () => control.selectGenero(context),
+              showArrow: true,
+            ),
+          ),
         ],
       ),
     );
@@ -272,11 +278,7 @@ class PerfilPage extends StatelessWidget {
   Widget _buildDivider() {
     return Padding(
       padding: const EdgeInsets.only(left: 24),
-      child: Divider(
-        height: 1,
-        thickness: 1,
-        color: Colors.grey[200],
-      ),
+      child: Divider(height: 1, thickness: 1, color: Colors.grey[200]),
     );
   }
 
@@ -291,11 +293,7 @@ class PerfilPage extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
         child: Row(
           children: [
-            Icon(
-              Icons.logout,
-              color: Colors.red[600],
-              size: 24,
-            ),
+            Icon(Icons.logout, color: Colors.red[600], size: 24),
             const SizedBox(width: 16),
             Text(
               'Cerrar sesión',

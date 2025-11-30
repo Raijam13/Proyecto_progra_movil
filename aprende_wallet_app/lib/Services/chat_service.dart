@@ -2,8 +2,10 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 //import 'package:get/get.dart';
 
+import 'package:aprende_wallet_app/config/api_config.dart';
+
 class ChatService {
-  final String apiUrl = "http://127.0.0.1:4567/chat"; // backend Ruby
+  final String apiUrl = "${ApiConfig.baseUrl}/chat"; // backend Ruby
 
   /// Envía el mensaje al backend y retorna la respuesta del bot
   Future<String> getResponse(String userText, int userId) async {

@@ -1,9 +1,11 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
+import 'package:aprende_wallet_app/config/api_config.dart';
+
 class CategoriasService {
   // URL base del backend (ajusta según tu configuración)
-  static const String baseUrl = 'http://127.0.0.1:4567';
+  static const String baseUrl = ApiConfig.baseUrl;
 
   // Header común para user_id (opcional, si decides usarlo)
   static Map<String, String> _getHeaders({int? userId}) {

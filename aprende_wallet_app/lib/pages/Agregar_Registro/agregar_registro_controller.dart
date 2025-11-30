@@ -12,17 +12,17 @@ class AgregarRegistroController extends GetxController {
   RxString cuenta = ''.obs;
   RxString categoria = ''.obs;
   Rx<DateTime> fechaHora = DateTime.now().obs;
-  
+
   // IDs necesarios para el backend
   RxInt idCuenta = 0.obs;
   RxInt idCategoria = 0.obs;
-  
+
   // Loading state
   RxBool isLoading = false.obs;
-  
+
   // User ID (debería venir de sesión)
   final int userId = 1;
-  
+
   // Listas de catálogos desde el backend
   RxList<Map<String, dynamic>> categorias = <Map<String, dynamic>>[].obs;
   RxList<Map<String, dynamic>> cuentas = <Map<String, dynamic>>[].obs;
@@ -38,7 +38,7 @@ class AgregarRegistroController extends GetxController {
     try {
       final catResponse = await CategoriasService.listarCategorias();
       categorias.value = catResponse;
-      
+
       final cuentasResponse = await CuentasService.listarCuentas(userId);
       cuentas.value = cuentasResponse;
     } catch (e) {
@@ -48,7 +48,6 @@ class AgregarRegistroController extends GetxController {
 
   void setTipo(String nuevoTipo) {
     tipo.value = nuevoTipo;
-    monto.value = 0.0;
   }
 
   void setMonto(double nuevoMonto) {
@@ -97,15 +96,15 @@ class AgregarRegistroController extends GetxController {
     try {
       // Determinar tipo de transacción: 1 = gasto, 2 = ingreso
       final idTipoTransaccion = tipo.value == 'Ingreso' ? 2 : 1;
-      
+
       // Formatear fecha para el backend (YYYY-MM-DD HH:MM:SS)
-      final fechaFormateada = 
-        '${fechaHora.value.year.toString().padLeft(4, '0')}-'
-        '${fechaHora.value.month.toString().padLeft(2, '0')}-'
-        '${fechaHora.value.day.toString().padLeft(2, '0')} '
-        '${fechaHora.value.hour.toString().padLeft(2, '0')}:'
-        '${fechaHora.value.minute.toString().padLeft(2, '0')}:'
-        '${fechaHora.value.second.toString().padLeft(2, '0')}';
+      final fechaFormateada =
+          '${fechaHora.value.year.toString().padLeft(4, '0')}-'
+          '${fechaHora.value.month.toString().padLeft(2, '0')}-'
+          '${fechaHora.value.day.toString().padLeft(2, '0')} '
+          '${fechaHora.value.hour.toString().padLeft(2, '0')}:'
+          '${fechaHora.value.minute.toString().padLeft(2, '0')}:'
+          '${fechaHora.value.second.toString().padLeft(2, '0')}';
 
       // Crear registro en el backend
       await RegistrosService.crearRegistro(

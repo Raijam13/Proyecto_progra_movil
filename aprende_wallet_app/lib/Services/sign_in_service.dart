@@ -2,11 +2,13 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../models/sign_in_model.dart';
 
+import 'package:aprende_wallet_app/config/api_config.dart';
+
 class SignInService {
-  final String baseUrl = "http://127.0.0.1:4567";
+  final String baseUrl = ApiConfig.baseUrl;
 
   Future<Map<String, dynamic>> login(SignInModel model) async {
-    final url = Uri.parse('http://127.0.0.1:4567/login');
+    final url = Uri.parse('${ApiConfig.baseUrl}/login');
 
     try {
       final response = await http.post(

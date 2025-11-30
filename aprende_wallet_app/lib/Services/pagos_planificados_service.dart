@@ -3,9 +3,11 @@ import 'package:http/http.dart' as http;
 import 'package:aprende_wallet_app/models/generic_response.dart';
 import 'package:aprende_wallet_app/models/pago_planificado_model.dart';
 
+import 'package:aprende_wallet_app/config/api_config.dart';
+
 class PagosPlanificadosService {
   // Use 127.0.0.1 for physical device with 'adb reverse tcp:4567 tcp:4567'
-  static const String baseUrl = 'http://127.0.0.1:4567';
+  static const String baseUrl = ApiConfig.baseUrl;
 
   /// Helper to parse list of payments
   List<PagoPlanificado> _pagoListFromJson(dynamic json) {
@@ -19,7 +21,14 @@ class PagosPlanificadosService {
 
   /// Helper to parse catalog items (generic map)
   Map<String, dynamic> _catalogosFromJson(dynamic json) {
-    return json as Map<String, dynamic>;
+    if (json is Map<String, dynamic>) {
+      return json;
+    }
+    // Handle case where json might be Map<dynamic, dynamic>
+    if (json is Map) {
+      return Map<String, dynamic>.from(json);
+    }
+    return {};
   }
 
   /// GET /pagos-planificados

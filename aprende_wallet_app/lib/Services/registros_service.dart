@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
+import 'package:aprende_wallet_app/config/api_config.dart';
+
 class RegistrosService {
-  static const String baseUrl = 'http://127.0.0.1:4567';
+  static const String baseUrl = ApiConfig.baseUrl;
 
   static Map<String, String> _getHeaders({int? userId}) {
     final headers = {'Content-Type': 'application/json'};
@@ -97,6 +99,7 @@ class RegistrosService {
       );
 
       if (response.statusCode == 201) {
+        if (response.body.isEmpty) return {};
         return json.decode(response.body);
       } else if (response.statusCode == 400) {
         final error = json.decode(response.body);

@@ -2,9 +2,11 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../models/sign_up_model.dart';
 
+import 'package:aprende_wallet_app/config/api_config.dart';
+
 class SignUpService {
   // DEBE SER ESTA URL PARA ANDROID EMULATOR:
-  final String baseUrl = "http://127.0.0.1:4567";
+  final String baseUrl = ApiConfig.baseUrl;
 
   Future<Map<String, dynamic>> registrarUsuario(SignUpModel model) async {
     final url = Uri.parse('$baseUrl/registro');
