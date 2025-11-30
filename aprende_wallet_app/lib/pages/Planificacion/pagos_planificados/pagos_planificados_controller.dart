@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:aprende_wallet_app/models/pago_planificado_model.dart';
 import 'package:aprende_wallet_app/services/pagos_planificados_service.dart';
 
@@ -15,12 +16,21 @@ class PagosPlanificadosController extends GetxController {
     fetchPagosPlanificados();
   }
 
+  Future<int> _getUserId() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getInt('user_id') ?? 0;
+  }
+
   void fetchPagosPlanificados() async {
     try {
       isLoading(true);
       errorMessage.value = '';
-      // TODO: Get real userId
-      var response = await _pagosService.getPagosPlanificados(1);
+      final userId = await _getUserId();
+      if (userId == 0) {
+        errorMessage.value = "Usuario no identificado";
+        return;
+      }
+      var response = await _pagosService.getPagosPlanificados(userId);
 
       if (response.success && response.data != null) {
         pagosList.assignAll(response.data!);
@@ -38,8 +48,12 @@ class PagosPlanificadosController extends GetxController {
   Future<void> eliminarPago(int id) async {
     try {
       isLoading(true);
-      // TODO: Get real userId
-      var response = await _pagosService.deletePagoPlanificado(id, 1);
+      final userId = await _getUserId();
+      if (userId == 0) {
+        Get.snackbar('Error', 'Usuario no identificado');
+        return;
+      }
+      var response = await _pagosService.deletePagoPlanificado(id, userId);
       if (response.success) {
         pagosList.removeWhere((p) => p.id == id);
         Get.snackbar('Éxito', 'Pago eliminado correctamente');

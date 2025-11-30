@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:aprende_wallet_app/services/pagos_planificados_service.dart';
 import 'package:aprende_wallet_app/pages/Planificacion/pagos_planificados/pagos_planificados_controller.dart';
@@ -32,11 +33,20 @@ class AgregarPagoPlanificadoController extends GetxController {
     fetchCatalogos();
   }
 
+  Future<int> _getUserId() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getInt('user_id') ?? 0;
+  }
+
   void fetchCatalogos() async {
     try {
       isLoading(true);
-      // TODO: Get real userId
-      var response = await _pagosService.getCatalogos(1);
+      final userId = await _getUserId();
+      if (userId == 0) {
+        Get.snackbar('Error', 'Usuario no identificado');
+        return;
+      }
+      var response = await _pagosService.getCatalogos(userId);
       if (response.success && response.data != null) {
         // Safe assignment handling potential nulls or empty lists
         categoriasList.assignAll(response.data!['categorias'] ?? []);
@@ -177,7 +187,7 @@ class AgregarPagoPlanificadoController extends GetxController {
         // Optional fields
         "fecha_inicio": DateTime.now().toIso8601String(),
         "intervalo": 1,
-        "idUsuario": 1, // TODO: Get real userId
+        "idUsuario": await _getUserId(),
       };
 
       var response = await _pagosService.createPagoPlanificado(data);
