@@ -132,10 +132,10 @@ class CuentasService {
   }
 
   /// DELETE /cuentas/:id - Eliminar una cuenta
-  static Future<Map<String, dynamic>> eliminarCuenta(int id) async {
+  static Future<Map<String, dynamic>> eliminarCuenta(int id, int userId) async {
     try {
       final response = await http.delete(
-        Uri.parse('$baseUrl/cuentas/$id'),
+        Uri.parse('$baseUrl/cuentas/$id?user_id=$userId'),
         headers: _getHeaders(),
       );
 

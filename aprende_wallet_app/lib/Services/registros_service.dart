@@ -116,10 +116,13 @@ class RegistrosService {
   }
 
   /// DELETE /registros/:id - Eliminar un registro (revierte saldo automáticamente)
-  static Future<Map<String, dynamic>> eliminarRegistro(int id) async {
+  static Future<Map<String, dynamic>> eliminarRegistro(
+    int id,
+    int userId,
+  ) async {
     try {
       final response = await http.delete(
-        Uri.parse('$baseUrl/registros/$id'),
+        Uri.parse('$baseUrl/registros/$id?user_id=$userId'),
         headers: _getHeaders(),
       );
 

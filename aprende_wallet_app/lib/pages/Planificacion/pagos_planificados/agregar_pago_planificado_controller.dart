@@ -35,7 +35,8 @@ class AgregarPagoPlanificadoController extends GetxController {
   void fetchCatalogos() async {
     try {
       isLoading(true);
-      var response = await _pagosService.getCatalogos();
+      // TODO: Get real userId
+      var response = await _pagosService.getCatalogos(1);
       if (response.success && response.data != null) {
         // Safe assignment handling potential nulls or empty lists
         categoriasList.assignAll(response.data!['categorias'] ?? []);
@@ -176,6 +177,7 @@ class AgregarPagoPlanificadoController extends GetxController {
         // Optional fields
         "fecha_inicio": DateTime.now().toIso8601String(),
         "intervalo": 1,
+        "idUsuario": 1, // TODO: Get real userId
       };
 
       var response = await _pagosService.createPagoPlanificado(data);

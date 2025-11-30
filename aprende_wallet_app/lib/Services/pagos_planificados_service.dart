@@ -32,9 +32,13 @@ class PagosPlanificadosService {
   }
 
   /// GET /pagos-planificados
-  Future<GenericResponse<List<PagoPlanificado>>> getPagosPlanificados() async {
+  Future<GenericResponse<List<PagoPlanificado>>> getPagosPlanificados(
+    int userId,
+  ) async {
     try {
-      final response = await http.get(Uri.parse('$baseUrl/pagos-planificados'));
+      final response = await http.get(
+        Uri.parse('$baseUrl/pagos-planificados?user_id=$userId'),
+      );
 
       if (response.statusCode == 200) {
         final jsonMap = json.decode(response.body);
@@ -58,10 +62,10 @@ class PagosPlanificadosService {
   }
 
   /// GET /pagos-planificados/catalogos
-  Future<GenericResponse<Map<String, dynamic>>> getCatalogos() async {
+  Future<GenericResponse<Map<String, dynamic>>> getCatalogos(int userId) async {
     try {
       final response = await http.get(
-        Uri.parse('$baseUrl/pagos-planificados/catalogos'),
+        Uri.parse('$baseUrl/pagos-planificados/catalogos?user_id=$userId'),
       );
 
       if (response.statusCode == 200) {
@@ -111,10 +115,13 @@ class PagosPlanificadosService {
   }
 
   /// DELETE /pagos-planificados/:id
-  Future<GenericResponse<void>> deletePagoPlanificado(int id) async {
+  Future<GenericResponse<void>> deletePagoPlanificado(
+    int id,
+    int userId,
+  ) async {
     try {
       final response = await http.delete(
-        Uri.parse('$baseUrl/pagos-planificados/$id'),
+        Uri.parse('$baseUrl/pagos-planificados/$id?user_id=$userId'),
       );
 
       final jsonMap = json.decode(response.body);

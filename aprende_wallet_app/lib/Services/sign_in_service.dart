@@ -21,15 +21,15 @@ class SignInService {
 
       if (response.statusCode == 200) {
         return {
-          "status": data["status"],
+          "success": data["success"],
           "message": data["message"],
-          "usuario": data["usuario"], // ← AQUÍ VIENE EL ID
+          "data": data["data"],
         };
       } else {
         return {
-          "status": data["status"],
-          "message": data["message"],
-          "usuario": null, // ← Importante
+          "success": false,
+          "message": data["message"] ?? "Error desconocido",
+          "data": null,
         };
       }
     } catch (e) {

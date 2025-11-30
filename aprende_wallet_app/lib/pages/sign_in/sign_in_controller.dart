@@ -29,13 +29,13 @@ class SignInController extends GetxController {
     // Depuración: imprimir respuesta completa
     print("LOGIN RESPONSE: $response");
 
-    success.value = response["status"] == "ok";
+    success.value = response["success"] == true;
     message.value = response["message"] ?? "Error desconocido";
 
     if (success.value) {
       final prefs = await SharedPreferences.getInstance();
 
-      final usuario = response["usuario"];
+      final usuario = response["data"];
 
       if (usuario == null) {
         print("⚠️ USUARIO ES NULL — NO SE GUARDARÁ ID");

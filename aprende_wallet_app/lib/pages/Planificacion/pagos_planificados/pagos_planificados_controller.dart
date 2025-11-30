@@ -19,7 +19,8 @@ class PagosPlanificadosController extends GetxController {
     try {
       isLoading(true);
       errorMessage.value = '';
-      var response = await _pagosService.getPagosPlanificados();
+      // TODO: Get real userId
+      var response = await _pagosService.getPagosPlanificados(1);
 
       if (response.success && response.data != null) {
         pagosList.assignAll(response.data!);
@@ -37,7 +38,8 @@ class PagosPlanificadosController extends GetxController {
   Future<void> eliminarPago(int id) async {
     try {
       isLoading(true);
-      var response = await _pagosService.deletePagoPlanificado(id);
+      // TODO: Get real userId
+      var response = await _pagosService.deletePagoPlanificado(id, 1);
       if (response.success) {
         pagosList.removeWhere((p) => p.id == id);
         Get.snackbar('Éxito', 'Pago eliminado correctamente');
