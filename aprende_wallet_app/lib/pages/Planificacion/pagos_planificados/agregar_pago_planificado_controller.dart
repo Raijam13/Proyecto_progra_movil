@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
-import 'package:aprende_wallet_app/services/pagos_planificados_service.dart';
+import 'package:aprende_wallet_app/Services/pagos_planificados_service.dart';
 import 'package:aprende_wallet_app/pages/Planificacion/pagos_planificados/pagos_planificados_controller.dart';
 
 class AgregarPagoPlanificadoController extends GetxController {

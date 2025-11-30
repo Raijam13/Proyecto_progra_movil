@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:aprende_wallet_app/models/pago_planificado_model.dart';
-import 'package:aprende_wallet_app/services/pagos_planificados_service.dart';
+import 'package:aprende_wallet_app/Services/pagos_planificados_service.dart';
 
 class PagosPlanificadosController extends GetxController {
   final PagosPlanificadosService _pagosService = PagosPlanificadosService();
