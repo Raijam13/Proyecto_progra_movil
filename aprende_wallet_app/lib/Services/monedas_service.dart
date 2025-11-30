@@ -2,12 +2,10 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class MonedasService {
-  static const String baseUrl = 'http://10.0.2.2:4567';
-  
+  static const String baseUrl = 'http://127.0.0.1:4567';
+
   static Map<String, String> _getHeaders() {
-    return {
-      'Content-Type': 'application/json',
-    };
+    return {'Content-Type': 'application/json'};
   }
 
   /// GET /monedas - Listar todas las monedas

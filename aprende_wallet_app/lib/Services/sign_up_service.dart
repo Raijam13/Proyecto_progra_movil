@@ -4,11 +4,11 @@ import '../models/sign_up_model.dart';
 
 class SignUpService {
   // DEBE SER ESTA URL PARA ANDROID EMULATOR:
-  final String baseUrl = "http://10.0.2.2:4567";
+  final String baseUrl = "http://127.0.0.1:4567";
 
   Future<Map<String, dynamic>> registrarUsuario(SignUpModel model) async {
     final url = Uri.parse('$baseUrl/registro');
-    
+
     print('🔍 URL de REGISTRO: $url');
     print('📦 Datos registro: ${model.toJson()}');
 

@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 class PagoPlanificado {
-  final String id;
+  final int id;
   final String nombre;
   final double monto;
   final String tipo; // "ingreso" o "gasto"
@@ -21,7 +21,7 @@ class PagoPlanificado {
 
   factory PagoPlanificado.fromJson(Map<String, dynamic> json) {
     return PagoPlanificado(
-      id: json['id'],
+      id: json['id'] as int,
       nombre: json['nombre'],
       monto: (json['monto'] as num).toDouble(),
       tipo: json['tipo'],

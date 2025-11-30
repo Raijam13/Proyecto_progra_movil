@@ -10,7 +10,9 @@ class PagosPlanificadosPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(PagosPlanificadosController());
+    final controller = Get.isRegistered<PagosPlanificadosController>()
+        ? Get.find<PagosPlanificadosController>()
+        : Get.put(PagosPlanificadosController());
 
     return Scaffold(
       appBar: AppBar(
@@ -66,7 +68,8 @@ class PagosPlanificadosPage extends StatelessWidget {
             ),
             title: Text(pago.nombre),
             subtitle: Text(
-                'Próximo: ${formatoFecha.format(pago.proximaFecha)} - ${pago.periodo}'),
+              'Próximo: ${formatoFecha.format(pago.proximaFecha)} - ${pago.periodo}',
+            ),
             trailing: Text(
               '${esGasto ? '-' : '+'}S/ ${pago.monto.toStringAsFixed(2)}',
               style: TextStyle(

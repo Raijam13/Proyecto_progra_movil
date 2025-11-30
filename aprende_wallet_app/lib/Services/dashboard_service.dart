@@ -2,12 +2,10 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class DashboardService {
-  static const String baseUrl = 'http://10.0.2.2:4567';
-  
+  static const String baseUrl = 'http://127.0.0.1:4567';
+
   static Map<String, String> _getHeaders({int? userId}) {
-    final headers = {
-      'Content-Type': 'application/json',
-    };
+    final headers = {'Content-Type': 'application/json'};
     if (userId != null) {
       headers['X-User-Id'] = userId.toString();
     }
@@ -23,17 +21,14 @@ class DashboardService {
     int? month,
   }) async {
     try {
-      final queryParams = {
-        'user_id': userId.toString(),
-        'period': period,
-      };
+      final queryParams = {'user_id': userId.toString(), 'period': period};
 
       if (year != null) queryParams['year'] = year.toString();
       if (month != null) queryParams['month'] = month.toString();
 
-      final uri = Uri.parse('$baseUrl/dashboard/summary').replace(
-        queryParameters: queryParams,
-      );
+      final uri = Uri.parse(
+        '$baseUrl/dashboard/summary',
+      ).replace(queryParameters: queryParams);
 
       final response = await http.get(
         uri,
@@ -67,7 +62,9 @@ class DashboardService {
       } else if (response.statusCode == 400) {
         throw Exception('Parámetro user_id es obligatorio');
       } else {
-        throw Exception('Error al obtener balance total: ${response.statusCode}');
+        throw Exception(
+          'Error al obtener balance total: ${response.statusCode}',
+        );
       }
     } catch (e) {
       print('Error en obtenerBalanceTotal: $e');

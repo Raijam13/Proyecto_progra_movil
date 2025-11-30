@@ -2,12 +2,10 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class RegistrosService {
-  static const String baseUrl = 'http://10.0.2.2:4567';
-  
+  static const String baseUrl = 'http://127.0.0.1:4567';
+
   static Map<String, String> _getHeaders({int? userId}) {
-    final headers = {
-      'Content-Type': 'application/json',
-    };
+    final headers = {'Content-Type': 'application/json'};
     if (userId != null) {
       headers['X-User-Id'] = userId.toString();
     }
@@ -21,11 +19,13 @@ class RegistrosService {
     int offset = 0,
   }) async {
     try {
-      final uri = Uri.parse('$baseUrl/registros').replace(queryParameters: {
-        'user_id': userId.toString(),
-        'limit': limit.toString(),
-        'offset': offset.toString(),
-      });
+      final uri = Uri.parse('$baseUrl/registros').replace(
+        queryParameters: {
+          'user_id': userId.toString(),
+          'limit': limit.toString(),
+          'offset': offset.toString(),
+        },
+      );
 
       final response = await http.get(
         uri,
@@ -74,7 +74,8 @@ class RegistrosService {
     required int idCategoria,
     required int idTipoTransaccion, // 1 = gasto, 2 = ingreso
     required double monto,
-    String? fechaHora, // Formato: "YYYY-MM-DD HH:MM:SS", opcional (usa ahora si no se envía)
+    String?
+    fechaHora, // Formato: "YYYY-MM-DD HH:MM:SS", opcional (usa ahora si no se envía)
   }) async {
     try {
       final body = <String, dynamic>{

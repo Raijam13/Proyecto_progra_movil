@@ -3,18 +3,15 @@ import 'package:http/http.dart' as http;
 //import 'package:get/get.dart';
 
 class ChatService {
-  final String apiUrl = "http://10.0.2.2:4567/chat"; // backend Ruby
+  final String apiUrl = "http://127.0.0.1:4567/chat"; // backend Ruby
 
   /// Envía el mensaje al backend y retorna la respuesta del bot
   Future<String> getResponse(String userText, int userId) async {
     try {
       final response = await http.post(
         Uri.parse(apiUrl),
-        headers: { "Content-Type": "application/json" },
-        body: jsonEncode({
-          "mensaje": userText,
-          "idUsuario": userId,
-        }),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({"mensaje": userText, "idUsuario": userId}),
       );
 
       if (response.statusCode == 200) {
@@ -28,4 +25,3 @@ class ChatService {
     }
   }
 }
-

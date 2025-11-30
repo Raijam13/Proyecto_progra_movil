@@ -3,13 +3,11 @@ import 'package:http/http.dart' as http;
 
 class CategoriasService {
   // URL base del backend (ajusta según tu configuración)
-  static const String baseUrl = 'http://10.0.2.2:4567';
-  
+  static const String baseUrl = 'http://127.0.0.1:4567';
+
   // Header común para user_id (opcional, si decides usarlo)
   static Map<String, String> _getHeaders({int? userId}) {
-    final headers = {
-      'Content-Type': 'application/json',
-    };
+    final headers = {'Content-Type': 'application/json'};
     if (userId != null) {
       headers['X-User-Id'] = userId.toString();
     }

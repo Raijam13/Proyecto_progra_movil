@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class PerfilService {
-  final String baseUrl = "http://10.0.2.2:4567";
+  final String baseUrl = "http://127.0.0.1:4567";
 
   // Obtener perfil
   Future<Map<String, dynamic>> obtenerPerfil(String id) async {
@@ -22,7 +22,10 @@ class PerfilService {
   }
 
   // Actualizar perfil parcial
-  Future<Map<String, dynamic>> actualizarPerfil(String id, Map<String, dynamic> data) async {
+  Future<Map<String, dynamic>> actualizarPerfil(
+    String id,
+    Map<String, dynamic> data,
+  ) async {
     final url = Uri.parse("$baseUrl/perfil/$id");
 
     try {
@@ -43,7 +46,10 @@ class PerfilService {
   }
 
   // Subir imagen de perfil
-  Future<Map<String, dynamic>> actualizarImagen(String id, String filePath) async {
+  Future<Map<String, dynamic>> actualizarImagen(
+    String id,
+    String filePath,
+  ) async {
     final url = Uri.parse("$baseUrl/perfil/$id/imagen");
 
     var request = http.MultipartRequest("PUT", url);

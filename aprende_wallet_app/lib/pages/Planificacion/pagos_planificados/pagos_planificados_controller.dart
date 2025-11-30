@@ -27,6 +27,25 @@ class PagosPlanificadosController extends GetxController {
         errorMessage.value =
             response.message ?? "Ocurrió un error al cargar los datos.";
       }
+    } catch (e) {
+      errorMessage.value = "Error inesperado: $e";
+    } finally {
+      isLoading(false);
+    }
+  }
+
+  Future<void> eliminarPago(int id) async {
+    try {
+      isLoading(true);
+      var response = await _pagosService.deletePagoPlanificado(id);
+      if (response.success) {
+        pagosList.removeWhere((p) => p.id == id);
+        Get.snackbar('Éxito', 'Pago eliminado correctamente');
+      } else {
+        Get.snackbar('Error', response.message ?? 'No se pudo eliminar');
+      }
+    } catch (e) {
+      Get.snackbar('Error', 'Error al eliminar: $e');
     } finally {
       isLoading(false);
     }
