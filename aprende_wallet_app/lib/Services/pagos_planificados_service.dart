@@ -41,10 +41,42 @@ class PagosPlanificadosService {
       );
 
       if (response.statusCode == 200) {
+        print(">>> DEBUG: Raw Pagos Planificados Response: ${response.body}");
         final jsonMap = json.decode(response.body);
         return GenericResponse<List<PagoPlanificado>>.fromJson(
           jsonMap,
           _pagoListFromJson,
+        );
+      } else {
+        return GenericResponse(
+          success: false,
+          message: "Error ${response.statusCode}: ${response.body}",
+        );
+      }
+    } catch (e) {
+      return GenericResponse(
+        success: false,
+        message: "Error de conexión: $e",
+        error: e.toString(),
+      );
+    }
+  }
+
+  /// GET /pagos-planificados/:id
+  Future<GenericResponse<PagoPlanificado>> getPagoPlanificado(
+    int id,
+    int userId,
+  ) async {
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl/pagos-planificados/$id?user_id=$userId'),
+      );
+
+      if (response.statusCode == 200) {
+        final jsonMap = json.decode(response.body);
+        return GenericResponse<PagoPlanificado>.fromJson(
+          jsonMap,
+          (data) => PagoPlanificado.fromJson(data as Map<String, dynamic>),
         );
       } else {
         return GenericResponse(
@@ -110,6 +142,32 @@ class PagosPlanificadosService {
       return GenericResponse(
         success: false,
         message: "Error al crear pago: $e",
+      );
+    }
+  }
+
+  /// PUT /pagos-planificados/:id
+  Future<GenericResponse<void>> updatePagoPlanificado(
+    int id,
+    Map<String, dynamic> data,
+  ) async {
+    try {
+      final response = await http.put(
+        Uri.parse('$baseUrl/pagos-planificados/$id'),
+        headers: {"Content-Type": "application/json"},
+        body: json.encode(data),
+      );
+
+      final jsonMap = json.decode(response.body);
+      return GenericResponse(
+        success: jsonMap['success'] ?? false,
+        message: jsonMap['message'],
+        error: jsonMap['error'],
+      );
+    } catch (e) {
+      return GenericResponse(
+        success: false,
+        message: "Error al actualizar pago: $e",
       );
     }
   }

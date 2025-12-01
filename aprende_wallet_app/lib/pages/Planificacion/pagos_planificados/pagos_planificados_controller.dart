@@ -26,8 +26,10 @@ class PagosPlanificadosController extends GetxController {
       isLoading(true);
       errorMessage.value = '';
       final userId = await _getUserId();
-      if (userId == 0) {
-        errorMessage.value = "Usuario no identificado";
+      print(">>> DEBUG: fetchPagosPlanificados userId: $userId");
+      if (userId <= 0) {
+        errorMessage.value = "Usuario no identificado (ID: $userId)";
+        isLoading(false);
         return;
       }
       var response = await _pagosService.getPagosPlanificados(userId);

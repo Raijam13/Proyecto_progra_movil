@@ -4,6 +4,7 @@ import 'package:aprende_wallet_app/components/splash_info_page.dart';
 import 'package:aprende_wallet_app/models/pago_planificado_model.dart';
 import 'package:intl/intl.dart';
 import 'pagos_planificados_controller.dart';
+import 'agregar_pago_planificado_controller.dart';
 
 class PagosPlanificadosPage extends StatelessWidget {
   const PagosPlanificadosPage({super.key});
@@ -21,7 +22,10 @@ class PagosPlanificadosPage extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.add_circle_outline, size: 30),
-            onPressed: () => Get.toNamed('/agregar-pago-planificado'),
+            onPressed: () {
+              Get.delete<AgregarPagoPlanificadoController>();
+              Get.toNamed('/agregar-pago-planificado');
+            },
           ),
         ],
       ),
@@ -31,10 +35,22 @@ class PagosPlanificadosPage extends StatelessWidget {
         }
 
         if (controller.pagosList.isEmpty) {
-          return _buildEmptyState();
+          return RefreshIndicator(
+            onRefresh: () async => controller.fetchPagosPlanificados(),
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: SizedBox(
+                height: MediaQuery.of(context).size.height - 100,
+                child: _buildEmptyState(),
+              ),
+            ),
+          );
         }
 
-        return _buildPagosList(controller);
+        return RefreshIndicator(
+          onRefresh: () async => controller.fetchPagosPlanificados(),
+          child: _buildPagosList(controller),
+        );
       }),
     );
   }
@@ -62,6 +78,10 @@ class PagosPlanificadosPage extends StatelessWidget {
         return Card(
           margin: const EdgeInsets.only(bottom: 16),
           child: ListTile(
+            onTap: () {
+              Get.delete<AgregarPagoPlanificadoController>();
+              Get.toNamed('/agregar-pago-planificado', arguments: pago);
+            },
             leading: Icon(
               esGasto ? Icons.arrow_circle_up : Icons.arrow_circle_down,
               color: esGasto ? Colors.red : Colors.green,

@@ -36,10 +36,12 @@ class HomePage extends StatelessWidget {
           ],
         ),
       ),
-      bottomNavigationBar: Obx(() => CustomBottomNavBar(
-        currentIndex: control.currentNavIndex.value,
-        onTap: (index) => control.changeNavIndex(index, context),
-      )),
+      bottomNavigationBar: Obx(
+        () => CustomBottomNavBar(
+          currentIndex: control.currentNavIndex.value,
+          onTap: (index) => control.changeNavIndex(index, context),
+        ),
+      ),
     );
   }
 
@@ -58,7 +60,7 @@ class HomePage extends StatelessWidget {
       child: Column(
         children: [
           // AppBar eliminado (se quitó el Padding con el botón de configuración)
-          
+
           // Cards de cuentas
           // Se agrega padding superior para dejar espacio desde la parte superior
           Padding(
@@ -73,7 +75,10 @@ class HomePage extends StatelessWidget {
                     itemCount: control.accounts.length + 1,
                     itemBuilder: (context, index) {
                       if (index < control.accounts.length) {
-                        return _buildAccountCard(context, control.accounts[index]);
+                        return _buildAccountCard(
+                          context,
+                          control.accounts[index],
+                        );
                       } else {
                         return _buildAddAccountCard(context);
                       }
@@ -126,17 +131,11 @@ class HomePage extends StatelessWidget {
           //const SizedBox(height: 4),
           Text(
             '${account['amount'].toStringAsFixed(2)}',
-            style: const TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-            ),
+            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
           Text(
             account['currency'],
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey[600],
-            ),
+            style: TextStyle(fontSize: 14, color: Colors.grey[600]),
           ),
         ],
       ),
@@ -165,11 +164,7 @@ class HomePage extends StatelessWidget {
                 color: colorScheme.primary,
                 shape: BoxShape.circle,
               ),
-              child: Icon(
-                Icons.add,
-                color: colorScheme.onPrimary,
-                size: 28,
-              ),
+              child: Icon(Icons.add, color: colorScheme.onPrimary, size: 28),
             ),
             const SizedBox(height: 12),
             Text(
@@ -217,10 +212,7 @@ class HomePage extends StatelessWidget {
             children: [
               const Text(
                 'Gastos principales',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               IconButton(
                 onPressed: () => control.openExpensesMenu(),
@@ -240,25 +232,27 @@ class HomePage extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          ...gastos.map((gasto) => Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      gasto['categoria'] as String,
-                      style: const TextStyle(fontSize: 16),
+          ...gastos.map(
+            (gasto) => Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    gasto['categoria'] as String,
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                  Text(
+                    'S/ ${(gasto['monto'] as num).toStringAsFixed(2)}',
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16,
                     ),
-                    Text(
-                      'S/ ${(gasto['monto'] as num).toStringAsFixed(2)}',
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 16,
-                      ),
-                    ),
-                  ],
-                ),
-              )),
+                  ),
+                ],
+              ),
+            ),
+          ),
           const SizedBox(height: 8),
           Align(
             alignment: Alignment.centerRight,
@@ -303,10 +297,7 @@ class HomePage extends StatelessWidget {
             children: [
               const Text(
                 'Últimos registros',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               IconButton(
                 onPressed: () => control.openTransactionsMenu(),
@@ -317,28 +308,63 @@ class HomePage extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 16),
-          Obx(
-            () {
-              final mostrarTodos = control.mostrarTodosRegistros.value;
-              final total = control.transactions.length;
-              final mostrar = mostrarTodos ? total : (total > 3 ? 3 : total);
-              final transaccionesOrdenadas = List<Map<String, dynamic>>.from(control.transactions);
-              transaccionesOrdenadas.sort((a, b) {
-                final dateA = a['dateTime'] as DateTime? ?? DateTime(1900);
-                final dateB = b['dateTime'] as DateTime? ?? DateTime(1900);
-                return dateB.compareTo(dateA);
-              });
-              return ListView.separated(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: mostrar,
-                separatorBuilder: (context, index) => const SizedBox(height: 12),
-                itemBuilder: (context, index) {
-                  return _buildTransactionItem(context, transaccionesOrdenadas[index]);
-                },
-              );
-            },
-          ),
+          Obx(() {
+            final mostrarTodos = control.mostrarTodosRegistros.value;
+            final total = control.transactions.length;
+            final mostrar = mostrarTodos ? total : (total > 3 ? 3 : total);
+
+            final transaccionesOrdenadas = List<Map<String, dynamic>>.from(
+              control.transactions,
+            );
+
+            print(
+              ">>> DEBUG: Sorting transactions. Count: ${transaccionesOrdenadas.length}",
+            );
+            transaccionesOrdenadas.sort((a, b) {
+              final dynamic dA = a['dateTime'];
+              final dynamic dB = b['dateTime'];
+
+              // Debug print for first item to see data type
+              if (transaccionesOrdenadas.indexOf(a) == 0) {
+                print(
+                  ">>> DEBUG: Item 0 dateTime type: ${dA.runtimeType}, value: $dA",
+                );
+              }
+
+              DateTime dateA;
+              if (dA is DateTime) {
+                dateA = dA;
+              } else if (dA is String) {
+                dateA = DateTime.tryParse(dA) ?? DateTime(1900);
+              } else {
+                dateA = DateTime(1900);
+              }
+
+              DateTime dateB;
+              if (dB is DateTime) {
+                dateB = dB;
+              } else if (dB is String) {
+                dateB = DateTime.tryParse(dB) ?? DateTime(1900);
+              } else {
+                dateB = DateTime(1900);
+              }
+
+              return dateB.compareTo(dateA);
+            });
+
+            return ListView.separated(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: mostrar,
+              separatorBuilder: (context, index) => const SizedBox(height: 12),
+              itemBuilder: (context, index) {
+                return _buildTransactionItem(
+                  context,
+                  transaccionesOrdenadas[index],
+                );
+              },
+            );
+          }),
           const SizedBox(height: 16),
           Align(
             alignment: Alignment.centerRight,
@@ -348,203 +374,9 @@ class HomePage extends StatelessWidget {
               return TextButton(
                 onPressed: () => control.showMoreTransactions(),
                 child: Text(
-                  control.mostrarTodosRegistros.value ? 'Mostrar menos' : 'Mostrar más',
-                  style: TextStyle(
-                    color: colorScheme.primary,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              );
-            }),
-          ),
-```
-                color: colorScheme.primary,
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                Icons.add,
-                color: colorScheme.onPrimary,
-                size: 28,
-              ),
-            ),
-            const SizedBox(height: 12),
-            Text(
-              'Agregar cuenta',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 14,
-                color: colorScheme.onPrimary,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildMainExpensesSection(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
-    final List<Map<String, dynamic>> gastos = [
-      {'categoria': 'Comida', 'monto': 120.50, 'fecha': '2025-10-10'},
-      {'categoria': 'Transporte', 'monto': 60.00, 'fecha': '2025-10-12'},
-      {'categoria': 'Entretenimiento', 'monto': 45.75, 'fecha': '2025-10-14'},
-    ];
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: colorScheme.surface,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text(
-                'Gastos principales',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              IconButton(
-                onPressed: () => control.openExpensesMenu(),
-                icon: const Icon(Icons.more_horiz),
-                padding: EdgeInsets.zero,
-                constraints: const BoxConstraints(),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'ESTE MES',
-            style: TextStyle(
-              fontSize: 12,
-              color: Colors.grey[600],
-              letterSpacing: 1.2,
-            ),
-          ),
-          const SizedBox(height: 16),
-          ...gastos.map((gasto) => Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      gasto['categoria'] as String,
-                      style: const TextStyle(fontSize: 16),
-                    ),
-                    Text(
-                      'S/ ${(gasto['monto'] as num).toStringAsFixed(2)}',
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 16,
-                      ),
-                    ),
-                  ],
-                ),
-              )),
-          const SizedBox(height: 8),
-          Align(
-            alignment: Alignment.centerRight,
-            child: TextButton(
-              onPressed: () => control.showMoreExpenses(),
-              child: Text(
-                'Mostrar más',
-                style: TextStyle(
-                  color: colorScheme.primary,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildRecentTransactionsSection(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: colorScheme.surface,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text(
-                'Últimos registros',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              IconButton(
-                onPressed: () => control.openTransactionsMenu(),
-                icon: const Icon(Icons.more_horiz),
-                padding: EdgeInsets.zero,
-                constraints: const BoxConstraints(),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Obx(
-            () {
-              final mostrarTodos = control.mostrarTodosRegistros.value;
-              final total = control.transactions.length;
-              final mostrar = mostrarTodos ? total : (total > 3 ? 3 : total);
-              final transaccionesOrdenadas = List<Map<String, dynamic>>.from(control.transactions);
-              transaccionesOrdenadas.sort((a, b) {
-                final dateA = a['dateTime'] as DateTime? ?? DateTime(1900);
-                final dateB = b['dateTime'] as DateTime? ?? DateTime(1900);
-                return dateB.compareTo(dateA);
-              });
-              return ListView.separated(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: mostrar,
-                separatorBuilder: (context, index) => const SizedBox(height: 12),
-                itemBuilder: (context, index) {
-                  return _buildTransactionItem(context, transaccionesOrdenadas[index]);
-                },
-              );
-            },
-          ),
-          const SizedBox(height: 16),
-          Align(
-            alignment: Alignment.centerRight,
-            child: Obx(() {
-              final total = control.transactions.length;
-              if (total <= 3) return const SizedBox.shrink();
-              return TextButton(
-                onPressed: () => control.showMoreTransactions(),
-                child: Text(
-                  control.mostrarTodosRegistros.value ? 'Mostrar menos' : 'Mostrar más',
+                  control.mostrarTodosRegistros.value
+                      ? 'Mostrar menos'
+                      : 'Mostrar más',
                   style: TextStyle(
                     color: colorScheme.primary,
                     fontWeight: FontWeight.w600,
@@ -558,8 +390,29 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget _buildTransactionItem(BuildContext context, Map<String, dynamic> transaction) {
+  Widget _buildTransactionItem(
+    BuildContext context,
+    Map<String, dynamic> transaction,
+  ) {
     final isIncome = transaction['type'] == 'income';
+
+    // Parseo seguro de datos para evitar crashes por nulos del backend
+    final int colorValue = (transaction['color'] is int)
+        ? transaction['color']
+        : Colors.grey.value;
+
+    final double amount = (transaction['amount'] is num)
+        ? (transaction['amount'] as num).toDouble()
+        : 0.0;
+
+    final String subtitle = (transaction['subtitle'] is String)
+        ? transaction['subtitle']
+        : 'Sin descripción';
+
+    final String date = (transaction['date'] is String)
+        ? transaction['date']
+        : '';
+
     final amountColor = isIncome ? Colors.green : Colors.red;
 
     return Row(
@@ -569,17 +422,17 @@ class HomePage extends StatelessWidget {
           width: 48,
           height: 48,
           decoration: BoxDecoration(
-            color: Color(transaction['color'] ?? Colors.grey.value).withOpacity(0.2),
+            color: Color(colorValue).withOpacity(0.2),
             shape: BoxShape.circle,
           ),
           child: Icon(
             isIncome ? Icons.arrow_downward : Icons.restaurant,
-            color: Color(transaction['color'] ?? Colors.grey.value),
+            color: Color(colorValue),
             size: 24,
           ),
         ),
         const SizedBox(width: 12),
-        
+
         // Título y subtítulo
         Expanded(
           child: Column(
@@ -587,22 +440,19 @@ class HomePage extends StatelessWidget {
             children: [
               const SizedBox(height: 2),
               Text(
-                transaction['subtitle'],
-                style: TextStyle(
-                  fontSize: 13,
-                  color: Colors.grey[600],
-                ),
+                subtitle,
+                style: TextStyle(fontSize: 13, color: Colors.grey[600]),
               ),
             ],
           ),
         ),
-        
+
         // Monto y fecha
         Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Text(
-              '${isIncome ? '+' : ''}S/ ${transaction['amount'].toStringAsFixed(2)}',
+              '${isIncome ? '+' : ''}S/ ${amount.toStringAsFixed(2)}',
               style: TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.bold,
@@ -610,17 +460,10 @@ class HomePage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 2),
-            Text(
-              transaction['date'],
-              style: TextStyle(
-                fontSize: 12,
-                color: Colors.grey[600],
-              ),
-            ),
+            Text(date, style: TextStyle(fontSize: 12, color: Colors.grey[600])),
           ],
         ),
       ],
     );
   }
 }
-```

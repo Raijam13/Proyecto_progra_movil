@@ -19,9 +19,24 @@ class AgregarPagoPlanificadoPage extends StatelessWidget {
           child: Text('Cancelar', style: TextStyle(color: colorScheme.primary)),
         ),
         leadingWidth: 100,
-        title: const Text('Pago Planificado',
-            style: TextStyle(fontWeight: FontWeight.bold)),
+        title: Obx(
+          () => Text(
+            controller.isEditing.value ? 'Editar Pago' : 'Pago Planificado',
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
+        ),
         centerTitle: true,
+        actions: [
+          Obx(() {
+            if (controller.isEditing.value) {
+              return IconButton(
+                icon: const Icon(Icons.delete_outline, color: Colors.red),
+                onPressed: () => _confirmDelete(context, controller),
+              );
+            }
+            return const SizedBox.shrink();
+          }),
+        ],
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -42,6 +57,24 @@ class AgregarPagoPlanificadoPage extends StatelessWidget {
     );
   }
 
+  void _confirmDelete(
+    BuildContext context,
+    AgregarPagoPlanificadoController controller,
+  ) {
+    Get.defaultDialog(
+      title: "Eliminar Pago",
+      middleText: "¿Estás seguro de que deseas eliminar este pago planificado?",
+      textConfirm: "Eliminar",
+      textCancel: "Cancelar",
+      confirmTextColor: Colors.white,
+      buttonColor: Colors.red,
+      onConfirm: () {
+        Get.back(); // Close dialog
+        controller.eliminarPagoPlanificado();
+      },
+    );
+  }
+
   Widget _buildSectionHeader(String title) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -58,47 +91,66 @@ class AgregarPagoPlanificadoPage extends StatelessWidget {
   }
 
   Widget _buildGeneralSection(
-      BuildContext context, AgregarPagoPlanificadoController controller) {
+    BuildContext context,
+    AgregarPagoPlanificadoController controller,
+  ) {
     return Container(
       color: Colors.white,
       child: Column(
         children: [
-          Obx(() => _buildListItem(
-                context: context,
-                icon: Icons.drive_file_rename_outline,
-                title: 'Nombre del pago',
-                trailing: controller.nombre.value.isEmpty
-                    ? 'Requerido'
-                    : controller.nombre.value,
-                trailingColor:
-                    controller.nombre.value.isEmpty ? Colors.red : Colors.grey,
-                onTap: () => controller.editarNombre(context),
-              )),
-          _buildDivider(),
-          _buildListItem(
-            context: context,
-            icon: Icons.category_outlined,
-            title: 'Categoría',
-            trailing: 'Requerido',
-            trailingColor: Colors.red,
-            onTap: () => controller.seleccionarCategoria(context),
+          Obx(
+            () => _buildListItem(
+              context: context,
+              icon: Icons.drive_file_rename_outline,
+              title: 'Nombre del pago',
+              trailing: controller.nombre.value.isEmpty
+                  ? 'Requerido'
+                  : controller.nombre.value,
+              trailingColor: controller.nombre.value.isEmpty
+                  ? Colors.red
+                  : Colors.grey,
+              onTap: () => controller.editarNombre(context),
+            ),
           ),
           _buildDivider(),
-          Obx(() => _buildListItem(
-                context: context,
-                icon: Icons.access_time,
-                title: 'Periodo',
-                trailing: controller.periodo.value,
-                onTap: () => controller.seleccionarPeriodo(context),
-              )),
+          Obx(
+            () => _buildListItem(
+              context: context,
+              icon: Icons.category_outlined,
+              title: 'Categoría',
+              trailing: controller.categoria.value.isEmpty
+                  ? 'Requerido'
+                  : controller.categoria.value,
+              trailingColor: controller.categoria.value.isEmpty
+                  ? Colors.red
+                  : Colors.grey,
+              onTap: () => controller.seleccionarCategoria(context),
+            ),
+          ),
           _buildDivider(),
-          _buildListItem(
-            context: context,
-            icon: Icons.account_balance_wallet_outlined,
-            title: 'Cuenta',
-            trailing: 'Requerido',
-            trailingColor: Colors.red,
-            onTap: () => controller.seleccionarCuenta(context),
+          Obx(
+            () => _buildListItem(
+              context: context,
+              icon: Icons.access_time,
+              title: 'Periodo',
+              trailing: controller.periodo.value,
+              onTap: () => controller.seleccionarPeriodo(context),
+            ),
+          ),
+          _buildDivider(),
+          Obx(
+            () => _buildListItem(
+              context: context,
+              icon: Icons.account_balance_wallet_outlined,
+              title: 'Cuenta',
+              trailing: controller.cuenta.value.isEmpty
+                  ? 'Requerido'
+                  : controller.cuenta.value,
+              trailingColor: controller.cuenta.value.isEmpty
+                  ? Colors.red
+                  : Colors.grey,
+              onTap: () => controller.seleccionarCuenta(context),
+            ),
           ),
         ],
       ),
@@ -106,7 +158,9 @@ class AgregarPagoPlanificadoPage extends StatelessWidget {
   }
 
   Widget _buildHeaderSection(
-      AgregarPagoPlanificadoController controller, ColorScheme colorScheme) {
+    AgregarPagoPlanificadoController controller,
+    ColorScheme colorScheme,
+  ) {
     return Obx(() {
       bool esGasto = controller.tipo.value == 'gasto';
       return Container(
@@ -124,7 +178,9 @@ class AgregarPagoPlanificadoPage extends StatelessWidget {
   }
 
   Widget _buildTipoSelector(
-      AgregarPagoPlanificadoController controller, ColorScheme colorScheme) {
+    AgregarPagoPlanificadoController controller,
+    ColorScheme colorScheme,
+  ) {
     return SegmentedButton<String>(
       segments: const [
         ButtonSegment(value: 'gasto', label: Text('Gasto')),
@@ -137,8 +193,9 @@ class AgregarPagoPlanificadoPage extends StatelessWidget {
       style: SegmentedButton.styleFrom(
         backgroundColor: Colors.white.withOpacity(0.2),
         foregroundColor: Colors.white,
-        selectedForegroundColor:
-            controller.tipo.value == 'gasto' ? Colors.red : Colors.green,
+        selectedForegroundColor: controller.tipo.value == 'gasto'
+            ? Colors.red
+            : Colors.green,
         selectedBackgroundColor: Colors.white,
       ),
     );
@@ -148,7 +205,10 @@ class AgregarPagoPlanificadoPage extends StatelessWidget {
     return TextField(
       textAlign: TextAlign.center,
       style: const TextStyle(
-          color: Colors.white, fontSize: 48, fontWeight: FontWeight.w300),
+        color: Colors.white,
+        fontSize: 48,
+        fontWeight: FontWeight.w300,
+      ),
       keyboardType: const TextInputType.numberWithOptions(decimal: true),
       decoration: const InputDecoration(
         hintText: '0.00',
@@ -156,19 +216,23 @@ class AgregarPagoPlanificadoPage extends StatelessWidget {
         border: InputBorder.none,
         prefixText: 'S/ ',
         prefixStyle: TextStyle(
-            color: Colors.white, fontSize: 30, fontWeight: FontWeight.w300),
+          color: Colors.white,
+          fontSize: 30,
+          fontWeight: FontWeight.w300,
+        ),
       ),
       onChanged: (value) => controller.setMonto(double.tryParse(value) ?? 0.0),
     );
   }
 
-  Widget _buildListItem(
-      {required BuildContext context,
-      required IconData icon,
-      required String title,
-      required String trailing,
-      Color? trailingColor,
-      required VoidCallback onTap}) {
+  Widget _buildListItem({
+    required BuildContext context,
+    required IconData icon,
+    required String title,
+    required String trailing,
+    Color? trailingColor,
+    required VoidCallback onTap,
+  }) {
     return InkWell(
       onTap: onTap,
       child: Padding(
@@ -186,14 +250,20 @@ class AgregarPagoPlanificadoPage extends StatelessWidget {
             ),
             const SizedBox(width: 16),
             Expanded(
-              child: Text(title,
-                  style: const TextStyle(
-                      fontSize: 16, fontWeight: FontWeight.w400)),
+              child: Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
             ),
             Text(
               trailing,
               style: TextStyle(
-                  fontSize: 16, color: trailingColor ?? Colors.grey[600]),
+                fontSize: 16,
+                color: trailingColor ?? Colors.grey[600],
+              ),
             ),
             const SizedBox(width: 8),
             Icon(Icons.chevron_right, color: Colors.grey[400], size: 24),

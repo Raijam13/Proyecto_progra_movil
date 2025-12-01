@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:aprende_wallet_app/Services/pagos_planificados_service.dart';
 import 'package:aprende_wallet_app/pages/Planificacion/pagos_planificados/pagos_planificados_controller.dart';
+import 'package:aprende_wallet_app/models/pago_planificado_model.dart';
 
 class AgregarPagoPlanificadoController extends GetxController {
   final PagosPlanificadosService _pagosService = PagosPlanificadosService();
@@ -14,6 +15,10 @@ class AgregarPagoPlanificadoController extends GetxController {
   final periodo = 'Mensual'.obs;
   final categoria = ''.obs;
   final cuenta = ''.obs;
+
+  // Edit Mode
+  final isEditing = false.obs;
+  int? _editingId;
 
   // IDs for backend
   int? _idCuenta;
@@ -31,6 +36,22 @@ class AgregarPagoPlanificadoController extends GetxController {
   void onInit() {
     super.onInit();
     fetchCatalogos();
+    _checkArguments();
+  }
+
+  void _checkArguments() {
+    final args = Get.arguments;
+    if (args != null && args is PagoPlanificado) {
+      isEditing.value = true;
+      _editingId = args.id;
+      nombre.value = args.nombre;
+      monto.value = args.monto;
+      tipo.value = args.tipo;
+      periodo.value = args.periodo;
+      categoria.value = args.categoria;
+      // Note: We don't have account name in the model, so it might stay empty or we need to fetch it
+      // For now, we leave it empty or set a placeholder if we had the ID
+    }
   }
 
   Future<int> _getUserId() async {
@@ -42,10 +63,7 @@ class AgregarPagoPlanificadoController extends GetxController {
     try {
       isLoading(true);
       final userId = await _getUserId();
-      print(">>> DEBUG: fetchCatalogos userId: $userId");
       var response = await _pagosService.getCatalogos(userId);
-      print(">>> DEBUG: fetchCatalogos success: ${response.success}");
-      print(">>> DEBUG: fetchCatalogos data: ${response.data}");
 
       if (response.success && response.data != null) {
         categoriasList.assignAll(response.data!['categorias'] ?? []);
@@ -53,15 +71,11 @@ class AgregarPagoPlanificadoController extends GetxController {
         cuentasList.assignAll(response.data!['cuentas'] ?? []);
         tiposPagoList.assignAll(response.data!['tipos_pago'] ?? []);
 
-        print(">>> DEBUG: categoriasList: $categoriasList");
-        print(">>> DEBUG: cuentasList: $cuentasList");
-
-        // Set defaults if available
-        if (frecuenciasList.isNotEmpty) {
+        // Set defaults if available and not editing
+        if (!isEditing.value && frecuenciasList.isNotEmpty) {
           periodo.value = frecuenciasList.first['nombre'];
         }
       } else {
-        print(">>> DEBUG: Failed to load catalogs or data is null");
         Get.snackbar('Error', 'No se pudieron cargar los catálogos');
       }
     } catch (e) {
@@ -128,9 +142,9 @@ class AgregarPagoPlanificadoController extends GetxController {
   ) {
     Get.bottomSheet(
       Container(
+        height: MediaQuery.of(context).size.height * 0.5,
         color: Colors.white,
         child: Column(
-          mainAxisSize: MainAxisSize.min,
           children: [
             Padding(
               padding: const EdgeInsets.all(16.0),
@@ -143,19 +157,32 @@ class AgregarPagoPlanificadoController extends GetxController {
               ),
             ),
             Expanded(
-              child: ListView.builder(
-                itemCount: items.length,
-                itemBuilder: (ctx, i) {
-                  final item = items[i];
-                  return ListTile(
-                    title: Text(item['nombre']),
-                    onTap: () {
-                      onSelect(item);
-                      Get.back();
-                    },
-                  );
-                },
-              ),
+              child: items.isEmpty
+                  ? const Center(
+                      child: Text(
+                        "No hay opciones disponibles",
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                    )
+                  : ListView.builder(
+                      itemCount: items.length,
+                      itemBuilder: (ctx, i) {
+                        final item = items[i];
+                        return ListTile(
+                          leading: const Icon(
+                            Icons.arrow_right,
+                            color: Colors.grey,
+                          ),
+                          title: Text(
+                            item['nombre']?.toString() ?? 'Sin nombre',
+                          ),
+                          onTap: () {
+                            onSelect(item);
+                            Get.back();
+                          },
+                        );
+                      },
+                    ),
             ),
           ],
         ),
@@ -164,6 +191,7 @@ class AgregarPagoPlanificadoController extends GetxController {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
+      isScrollControlled: true,
     );
   }
 
@@ -185,20 +213,27 @@ class AgregarPagoPlanificadoController extends GetxController {
         "tipo": tipo.value,
         "periodo": periodo.value,
         "categoria": categoria.value,
-        "id_cuenta": _idCuenta,
-        "tipo_pago": "Efectivo", // Default or add selector
-        // Optional fields
+        "id_cuenta":
+            _idCuenta ?? 1, // Fallback if not selected but text is present
+        "tipo_pago": "Efectivo",
         "fecha_inicio": DateTime.now().toIso8601String(),
         "intervalo": 1,
         "idUsuario": await _getUserId(),
       };
 
-      var response = await _pagosService.createPagoPlanificado(data);
+      dynamic response;
+      if (isEditing.value && _editingId != null) {
+        response = await _pagosService.updatePagoPlanificado(_editingId!, data);
+      } else {
+        response = await _pagosService.createPagoPlanificado(data);
+      }
 
       if (response.success) {
         Get.back();
-        Get.snackbar('Éxito', 'Pago guardado correctamente');
-        // Refresh list
+        Get.snackbar(
+          'Éxito',
+          isEditing.value ? 'Pago actualizado' : 'Pago guardado',
+        );
         if (Get.isRegistered<PagosPlanificadosController>()) {
           Get.find<PagosPlanificadosController>().fetchPagosPlanificados();
         }
@@ -207,6 +242,33 @@ class AgregarPagoPlanificadoController extends GetxController {
       }
     } catch (e) {
       Get.snackbar('Error', 'Error inesperado: $e');
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  void eliminarPagoPlanificado() async {
+    if (_editingId == null) return;
+
+    try {
+      isLoading.value = true;
+      final userId = await _getUserId();
+      final response = await _pagosService.deletePagoPlanificado(
+        _editingId!,
+        userId,
+      );
+
+      if (response.success) {
+        Get.back(); // Close edit page
+        Get.snackbar('Éxito', 'Pago eliminado correctamente');
+        if (Get.isRegistered<PagosPlanificadosController>()) {
+          Get.find<PagosPlanificadosController>().fetchPagosPlanificados();
+        }
+      } else {
+        Get.snackbar('Error', response.message ?? 'No se pudo eliminar');
+      }
+    } catch (e) {
+      Get.snackbar('Error', 'Error al eliminar: $e');
     } finally {
       isLoading.value = false;
     }
