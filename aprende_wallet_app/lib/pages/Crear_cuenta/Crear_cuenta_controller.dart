@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../Crear_cuenta/edicion_modals/editar_nombre_cuenta.dart';
 import '../Crear_cuenta/edicion_modals/editar_saldo_cuenta.dart';
 import '../Crear_cuenta/edicion_modals/seleccionar_moneda.dart';
@@ -14,12 +13,15 @@ class CrearCuentaController extends GetxController {
   RxDouble currentBalance = 0.00.obs;
   RxString currency = 'PEN'.obs;
   RxString accountType = 'Efectivo'.obs;
-
+  
   // Toggle de acciones
   RxBool excludeFromStats = false.obs;
-
+  
   // Loading state
   RxBool isLoading = false.obs;
+  
+  // User ID (debería venir de sesión)
+  final int userId = 1;
 
   // Método para cancelar (volver atrás)
   void cancel(BuildContext context) {
@@ -32,14 +34,14 @@ class CrearCuentaController extends GetxController {
       context: context,
       initialValue: accountName.value,
       onChanged: (value) {
-        // Actualización en tiempo real
-        accountName.value = value;
-      },
-      onAccept: (value) {
-        // Al aceptar
-        accountName.value = value;
-      },
-    );
+      // Actualización en tiempo real
+      accountName.value = value;
+    },
+    onAccept: (value) {
+      // Al aceptar
+      accountName.value = value;
+    },
+  );
   }
 
   // Método para navegar a editar saldo actual
@@ -49,14 +51,14 @@ class CrearCuentaController extends GetxController {
       initialValue: currentBalance.value,
       currency: currency.value,
       onChanged: (value) {
-        // Actualización en tiempo real
-        currentBalance.value = value;
-      },
-      onAccept: (value) {
-        // Al aceptar
-        currentBalance.value = value;
-      },
-    );
+      // Actualización en tiempo real
+      currentBalance.value = value;
+    },
+    onAccept: (value) {
+      // Al aceptar
+      currentBalance.value = value;
+    },
+  );
   }
 
   // Método para navegar a seleccionar moneda
@@ -66,8 +68,8 @@ class CrearCuentaController extends GetxController {
       selectedCurrency: currency.value,
       onSelect: (value) {
         currency.value = value;
-      },
-    );
+    },
+  );
   }
 
   // Método para navegar a seleccionar tipo de cuenta
@@ -77,18 +79,13 @@ class CrearCuentaController extends GetxController {
       selectedType: accountType.value,
       onSelect: (value) {
         accountType.value = value;
-      },
-    );
+    },
+  );
   }
 
   // Método para toggle de estadísticas
   void toggleExcludeFromStats(bool value) {
     excludeFromStats.value = value;
-  }
-
-  Future<int> _getUserId() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getInt('user_id') ?? -1;
   }
 
   // Método para guardar la cuenta
@@ -107,12 +104,6 @@ class CrearCuentaController extends GetxController {
 
     isLoading.value = true;
     try {
-      final userId = await _getUserId();
-      if (userId == -1) {
-        Get.snackbar('Error', 'Usuario no identificado');
-        return;
-      }
-
       // Crear cuenta en el backend
       await CuentasService.crearCuenta(
         nombre: accountName.value,

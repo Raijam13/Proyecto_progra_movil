@@ -59,10 +59,7 @@ class HomePage extends StatelessWidget {
       ),
       child: Column(
         children: [
-          // AppBar eliminado (se quitó el Padding con el botón de configuración)
-
           // Cards de cuentas
-          // Se agrega padding superior para dejar espacio desde la parte superior
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 30, 16, 20),
             child: Obx(
@@ -99,7 +96,7 @@ class HomePage extends StatelessWidget {
     return Container(
       width: 150,
       margin: const EdgeInsets.only(right: 12),
-      padding: const EdgeInsets.all(8),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: colorScheme.onPrimary,
         borderRadius: BorderRadius.circular(16),
@@ -128,14 +125,20 @@ class HomePage extends StatelessWidget {
               fontWeight: FontWeight.w500,
             ),
           ),
-          //const SizedBox(height: 4),
+          const SizedBox(height: 4),
           Text(
             '${account['amount'].toStringAsFixed(2)}',
-            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            style: const TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+            ),
           ),
           Text(
             account['currency'],
-            style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.grey[600],
+            ),
           ),
         ],
       ),
@@ -460,7 +463,10 @@ class HomePage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 2),
-            Text(date, style: TextStyle(fontSize: 12, color: Colors.grey[600])),
+            Text(
+              date,
+              style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+            ),
           ],
         ),
       ],

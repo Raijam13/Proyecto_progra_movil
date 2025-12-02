@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import '../../../Services/categorias_service.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class CategoriaItem {
   final int id;
   final String nombre;
   final IconData icono;
   final Color color;
-
+  
   CategoriaItem({
     required this.id,
     required this.nombre,
@@ -42,12 +41,10 @@ class _SeleccionarCategoriaContent extends StatefulWidget {
   const _SeleccionarCategoriaContent({required this.onSelect});
 
   @override
-  State<_SeleccionarCategoriaContent> createState() =>
-      _SeleccionarCategoriaContentState();
+  State<_SeleccionarCategoriaContent> createState() => _SeleccionarCategoriaContentState();
 }
 
-class _SeleccionarCategoriaContentState
-    extends State<_SeleccionarCategoriaContent> {
+class _SeleccionarCategoriaContentState extends State<_SeleccionarCategoriaContent> {
   List<CategoriaItem> categorias = [];
   List<CategoriaItem> filteredCategorias = [];
   bool isLoading = true;
@@ -60,12 +57,6 @@ class _SeleccionarCategoriaContentState
     _cargarCategorias();
   }
 
-  // REVISING PLAN:
-  // 1. Add import to SeleccionarCategoriaModal
-  // 2. Update _cargarCategorias
-
-  // Let's just do the update here.
-
   Future<void> _cargarCategorias() async {
     setState(() {
       isLoading = true;
@@ -73,18 +64,7 @@ class _SeleccionarCategoriaContentState
     });
 
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final userId = prefs.getInt('user_id') ?? -1;
-
-      if (userId == -1) {
-        setState(() {
-          errorMessage = 'Usuario no identificado';
-          isLoading = false;
-        });
-        return;
-      }
-
-      final data = await CategoriasService.listarCategorias(userId);
+      final data = await CategoriasService.listarCategorias();
       setState(() {
         categorias = data.map((cat) {
           return CategoriaItem(
@@ -111,9 +91,7 @@ class _SeleccionarCategoriaContentState
         filteredCategorias = List.from(categorias);
       } else {
         filteredCategorias = categorias
-            .where(
-              (cat) => cat.nombre.toLowerCase().contains(query.toLowerCase()),
-            )
+            .where((cat) => cat.nombre.toLowerCase().contains(query.toLowerCase()))
             .toList();
       }
     });
@@ -133,10 +111,7 @@ class _SeleccionarCategoriaContentState
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               child: Row(
                 children: [
-                  const Text(
-                    'Categorías',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
+                  const Text('Categorías', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                 ],
               ),
             ),
@@ -149,10 +124,7 @@ class _SeleccionarCategoriaContentState
                   prefixIcon: const Icon(Icons.search),
                   filled: true,
                   fillColor: Colors.grey[100],
-                  contentPadding: const EdgeInsets.symmetric(
-                    vertical: 0,
-                    horizontal: 12,
-                  ),
+                  contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 12),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: BorderSide.none,
@@ -172,11 +144,7 @@ class _SeleccionarCategoriaContentState
                 padding: const EdgeInsets.all(32.0),
                 child: Column(
                   children: [
-                    const Icon(
-                      Icons.error_outline,
-                      size: 48,
-                      color: Colors.red,
-                    ),
+                    const Icon(Icons.error_outline, size: 48, color: Colors.red),
                     const SizedBox(height: 8),
                     Text(errorMessage!, textAlign: TextAlign.center),
                   ],
@@ -189,28 +157,15 @@ class _SeleccionarCategoriaContentState
                   children: [
                     Icon(Icons.search_off, size: 48, color: Colors.grey),
                     SizedBox(height: 8),
-                    Text(
-                      'No se encontraron categorías',
-                      textAlign: TextAlign.center,
-                    ),
+                    Text('No se encontraron categorías', textAlign: TextAlign.center),
                   ],
                 ),
               )
             else ...[
               Container(
                 alignment: Alignment.centerLeft,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 8,
-                ),
-                child: const Text(
-                  'TODAS LAS CATEGORÍAS',
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: Colors.grey,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                child: const Text('TODAS LAS CATEGORÍAS', style: TextStyle(fontSize: 13, color: Colors.grey, fontWeight: FontWeight.bold)),
               ),
               Flexible(
                 child: ListView.builder(
@@ -223,14 +178,8 @@ class _SeleccionarCategoriaContentState
                         backgroundColor: cat.color,
                         child: Icon(cat.icono, color: Colors.white),
                       ),
-                      title: Text(
-                        cat.nombre,
-                        style: const TextStyle(fontSize: 16),
-                      ),
-                      trailing: const Icon(
-                        Icons.chevron_right,
-                        color: Colors.grey,
-                      ),
+                      title: Text(cat.nombre, style: const TextStyle(fontSize: 16)),
+                      trailing: const Icon(Icons.chevron_right, color: Colors.grey),
                       onTap: () {
                         widget.onSelect(cat.nombre, cat.id);
                         Navigator.pop(context);

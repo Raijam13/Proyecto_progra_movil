@@ -1,13 +1,13 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
-import 'package:aprende_wallet_app/config/api_config.dart';
-
 class RegistrosService {
-  static const String baseUrl = ApiConfig.baseUrl;
-
+  static const String baseUrl = 'http://10.0.2.2:4567';
+  
   static Map<String, String> _getHeaders({int? userId}) {
-    final headers = {'Content-Type': 'application/json'};
+    final headers = {
+      'Content-Type': 'application/json',
+    };
     if (userId != null) {
       headers['X-User-Id'] = userId.toString();
     }
@@ -21,13 +21,11 @@ class RegistrosService {
     int offset = 0,
   }) async {
     try {
-      final uri = Uri.parse('$baseUrl/registros').replace(
-        queryParameters: {
-          'user_id': userId.toString(),
-          'limit': limit.toString(),
-          'offset': offset.toString(),
-        },
-      );
+      final uri = Uri.parse('$baseUrl/registros').replace(queryParameters: {
+        'user_id': userId.toString(),
+        'limit': limit.toString(),
+        'offset': offset.toString(),
+      });
 
       final response = await http.get(
         uri,
@@ -35,15 +33,7 @@ class RegistrosService {
       );
 
       if (response.statusCode == 200) {
-        final dynamic decoded = json.decode(response.body);
-        List<dynamic> data;
-        if (decoded is Map<String, dynamic> && decoded.containsKey('data')) {
-          data = decoded['data'];
-        } else if (decoded is List) {
-          data = decoded;
-        } else {
-          data = [];
-        }
+        final List<dynamic> data = json.decode(response.body);
         return data.cast<Map<String, dynamic>>();
       } else if (response.statusCode == 400) {
         throw Exception('Parámetro user_id es obligatorio');
@@ -84,8 +74,7 @@ class RegistrosService {
     required int idCategoria,
     required int idTipoTransaccion, // 1 = gasto, 2 = ingreso
     required double monto,
-    String?
-    fechaHora, // Formato: "YYYY-MM-DD HH:MM:SS", opcional (usa ahora si no se envía)
+    String? fechaHora, // Formato: "YYYY-MM-DD HH:MM:SS", opcional (usa ahora si no se envía)
   }) async {
     try {
       final body = <String, dynamic>{
@@ -107,7 +96,6 @@ class RegistrosService {
       );
 
       if (response.statusCode == 201) {
-        if (response.body.isEmpty) return {};
         return json.decode(response.body);
       } else if (response.statusCode == 400) {
         final error = json.decode(response.body);
@@ -124,13 +112,10 @@ class RegistrosService {
   }
 
   /// DELETE /registros/:id - Eliminar un registro (revierte saldo automáticamente)
-  static Future<Map<String, dynamic>> eliminarRegistro(
-    int id,
-    int userId,
-  ) async {
+  static Future<Map<String, dynamic>> eliminarRegistro(int id) async {
     try {
       final response = await http.delete(
-        Uri.parse('$baseUrl/registros/$id?user_id=$userId'),
+        Uri.parse('$baseUrl/registros/$id'),
         headers: _getHeaders(),
       );
 

@@ -12,8 +12,7 @@ class HomeController extends GetxController {
   RxInt currentNavIndex = 0.obs;
   // Loading state
   RxBool isLoading = false.obs;
-  // User ID (hardcodeado por ahora, debería venir de sesión)
-  //final int userId = 1;
+  // User ID (se obtiene de SharedPreferences)
   late int userId;
 
   // Lista de cuentas (ahora desde el backend)
@@ -77,21 +76,40 @@ class HomeController extends GetxController {
     }
   }
 
+  // Cargar cuentas desde el backend
   Future<void> cargarCuentas() async {
     try {
-      final data = await CuentasService.listarCuentas(userId);
-      accounts.value = data;
+      final cuentas = await CuentasService.listarCuentas(userId);
+      accounts.value = cuentas;
     } catch (e) {
-      print("Error cargando cuentas: $e");
+      print('Error al cargar cuentas: $e');
+      rethrow;
     }
   }
 
+  // Cargar registros desde el backend
   Future<void> cargarRegistros() async {
     try {
-      final data = await RegistrosService.listarRegistros(userId: userId);
-      transactions.value = data;
+      final registros = await RegistrosService.listarRegistros(
+        userId: userId,
+        limit: 20,
+        offset: 0,
+      );
+      // Convertir formato del backend al formato usado en el front
+      transactions.value = registros.map((r) {
+        return {
+          'id': r['id'],
+          'title': r['category'] ?? 'Sin categoría',
+          'subtitle': r['subtitle'] ?? '',
+          'amount': (r['amount'] as num).toDouble(),
+          'date': r['date'] ?? 'hoy',
+          'type': r['type'] ?? 'expense',
+          'color': r['type'] == 'ingreso' ? 0xFF43A047 : 0xFFEF5350,
+        };
+      }).toList();
     } catch (e) {
-      print("Error cargando registros: $e");
+      print('Error al cargar registros: $e');
+      rethrow;
     }
   }
 
@@ -127,8 +145,8 @@ class HomeController extends GetxController {
 
   String _formatDate(DateTime date) {
     final now = DateTime.now();
-    if (date.year == now.year &&
-        date.month == now.month &&
+    if (date.year == now.year && 
+        date.month == now.month && 
         date.day == now.day) {
       return 'hoy';
     }
@@ -138,19 +156,8 @@ class HomeController extends GetxController {
 
   String _nombreMes(int mes) {
     const nombres = [
-      '',
-      'enero',
-      'febrero',
-      'marzo',
-      'abril',
-      'mayo',
-      'junio',
-      'julio',
-      'agosto',
-      'septiembre',
-      'octubre',
-      'noviembre',
-      'diciembre',
+      '', 'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
+      'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'
     ];
     return nombres[mes];
   }
@@ -165,7 +172,7 @@ class HomeController extends GetxController {
 
     if (index == 1) {
       Navigator.pushReplacementNamed(context, '/planificacion');
-    }
+    } 
     // Navegación al presionar el botón central (+)
     if (index == 2) {
       Navigator.pushNamed(context, '/agregar-registro');
@@ -182,7 +189,6 @@ class HomeController extends GetxController {
 
   // Método para agregar una nueva cuenta
   void addAccount(BuildContext context) {
-    // Por ahora solo un print, más adelante navegará a crear cuenta
     Navigator.pushNamed(context, '/crear-cuenta');
   }
 

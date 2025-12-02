@@ -1,13 +1,13 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
-import 'package:aprende_wallet_app/config/api_config.dart';
-
 class CuentasService {
-  static const String baseUrl = ApiConfig.baseUrl;
-
+  static const String baseUrl = 'http://10.0.2.2:4567';
+  
   static Map<String, String> _getHeaders({int? userId}) {
-    final headers = {'Content-Type': 'application/json'};
+    final headers = {
+      'Content-Type': 'application/json',
+    };
     if (userId != null) {
       headers['X-User-Id'] = userId.toString();
     }
@@ -24,15 +24,7 @@ class CuentasService {
       );
 
       if (response.statusCode == 200) {
-        final dynamic decoded = json.decode(response.body);
-        List<dynamic> data;
-        if (decoded is Map<String, dynamic> && decoded.containsKey('data')) {
-          data = decoded['data'];
-        } else if (decoded is List) {
-          data = decoded;
-        } else {
-          data = [];
-        }
+        final List<dynamic> data = json.decode(response.body);
         return data.cast<Map<String, dynamic>>();
       } else if (response.statusCode == 400) {
         throw Exception('Parámetro user_id es obligatorio');
@@ -90,7 +82,6 @@ class CuentasService {
       );
 
       if (response.statusCode == 201) {
-        if (response.body.isEmpty) return {};
         return json.decode(response.body);
       } else if (response.statusCode == 400) {
         final error = json.decode(response.body);
@@ -140,10 +131,10 @@ class CuentasService {
   }
 
   /// DELETE /cuentas/:id - Eliminar una cuenta
-  static Future<Map<String, dynamic>> eliminarCuenta(int id, int userId) async {
+  static Future<Map<String, dynamic>> eliminarCuenta(int id) async {
     try {
       final response = await http.delete(
-        Uri.parse('$baseUrl/cuentas/$id?user_id=$userId'),
+        Uri.parse('$baseUrl/cuentas/$id'),
         headers: _getHeaders(),
       );
 

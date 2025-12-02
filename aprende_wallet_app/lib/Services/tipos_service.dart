@@ -1,13 +1,13 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
-import 'package:aprende_wallet_app/config/api_config.dart';
-
 class TiposService {
-  static const String baseUrl = ApiConfig.baseUrl;
-
+  static const String baseUrl = 'http://10.0.2.2:4567';
+  
   static Map<String, String> _getHeaders() {
-    return {'Content-Type': 'application/json'};
+    return {
+      'Content-Type': 'application/json',
+    };
   }
 
   /// GET /tipos-cuenta - Listar todos los tipos de cuenta
@@ -22,9 +22,7 @@ class TiposService {
         final List<dynamic> data = json.decode(response.body);
         return data.cast<Map<String, dynamic>>();
       } else {
-        throw Exception(
-          'Error al listar tipos de cuenta: ${response.statusCode}',
-        );
+        throw Exception('Error al listar tipos de cuenta: ${response.statusCode}');
       }
     } catch (e) {
       print('Error en listarTiposCuenta: $e');
@@ -44,9 +42,7 @@ class TiposService {
         final List<dynamic> data = json.decode(response.body);
         return data.cast<Map<String, dynamic>>();
       } else {
-        throw Exception(
-          'Error al listar tipos de transacción: ${response.statusCode}',
-        );
+        throw Exception('Error al listar tipos de transacción: ${response.statusCode}');
       }
     } catch (e) {
       print('Error en listarTiposTransaccion: $e');

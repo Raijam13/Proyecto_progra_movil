@@ -1,13 +1,13 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
-import 'package:aprende_wallet_app/config/api_config.dart';
-
 class MonedasService {
-  static const String baseUrl = ApiConfig.baseUrl;
-
+  static const String baseUrl = 'http://10.0.2.2:4567';
+  
   static Map<String, String> _getHeaders() {
-    return {'Content-Type': 'application/json'};
+    return {
+      'Content-Type': 'application/json',
+    };
   }
 
   /// GET /monedas - Listar todas las monedas
