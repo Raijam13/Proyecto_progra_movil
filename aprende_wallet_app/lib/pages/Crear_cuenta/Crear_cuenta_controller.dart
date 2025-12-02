@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../Crear_cuenta/edicion_modals/editar_nombre_cuenta.dart';
 import '../Crear_cuenta/edicion_modals/editar_saldo_cuenta.dart';
 import '../Crear_cuenta/edicion_modals/seleccionar_moneda.dart';
@@ -20,8 +21,25 @@ class CrearCuentaController extends GetxController {
   // Loading state
   RxBool isLoading = false.obs;
   
-  // User ID (debería venir de sesión)
-  final int userId = 1;
+  // User ID (desde SharedPreferences)
+  late int userId;
+
+  @override
+  void onInit() {
+    super.onInit();
+    _initUserId();
+  }
+
+  Future<void> _initUserId() async {
+    final prefs = await SharedPreferences.getInstance();
+    userId = prefs.getInt('user_id') ?? -1;
+    final userEmail = prefs.getString('user_email') ?? 'no email';
+    print("🏦 CrearCuentaController initialized with userId: $userId (email: $userEmail)");
+    
+    if (userId == -1) {
+      print("⚠️ No hay userId en SharedPreferences al crear cuenta");
+    }
+  }
 
   // Método para cancelar (volver atrás)
   void cancel(BuildContext context) {
@@ -117,6 +135,7 @@ class CrearCuentaController extends GetxController {
       try {
         final homeController = Get.find<HomeController>();
         await homeController.cargarCuentas();
+        await homeController.cargarBalanceTotal();
       } catch (e) {
         print('HomeController no encontrado: $e');
       }

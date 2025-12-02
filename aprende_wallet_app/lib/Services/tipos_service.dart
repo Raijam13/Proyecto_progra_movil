@@ -19,7 +19,8 @@ class TiposService {
       );
 
       if (response.statusCode == 200) {
-        final List<dynamic> data = json.decode(response.body);
+        final body = json.decode(response.body);
+        final List<dynamic> data = body['data'] ?? [];
         return data.cast<Map<String, dynamic>>();
       } else {
         throw Exception('Error al listar tipos de cuenta: ${response.statusCode}');
@@ -39,7 +40,8 @@ class TiposService {
       );
 
       if (response.statusCode == 200) {
-        final List<dynamic> data = json.decode(response.body);
+        final body = json.decode(response.body);
+        final List<dynamic> data = body['data'] ?? [];
         return data.cast<Map<String, dynamic>>();
       } else {
         throw Exception('Error al listar tipos de transacción: ${response.statusCode}');

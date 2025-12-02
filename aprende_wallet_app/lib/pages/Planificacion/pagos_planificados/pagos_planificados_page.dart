@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:aprende_wallet_app/components/splash_info_page.dart';
-import 'package:aprende_wallet_app/models/pago_planificado_model.dart';
 import 'package:intl/intl.dart';
 import 'pagos_planificados_controller.dart';
 import 'agregar_pago_planificado_controller.dart';

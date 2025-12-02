@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../Home/home_controller.dart';
 import '../../Services/registros_service.dart';
 import '../../Services/categorias_service.dart';
@@ -20,8 +21,8 @@ class AgregarRegistroController extends GetxController {
   // Loading state
   RxBool isLoading = false.obs;
   
-  // User ID (debería venir de sesión)
-  final int userId = 1;
+  // User ID (desde SharedPreferences)
+  late int userId;
   
   // Listas de catálogos desde el backend
   RxList<Map<String, dynamic>> categorias = <Map<String, dynamic>>[].obs;
@@ -30,7 +31,20 @@ class AgregarRegistroController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    cargarCatalogos();
+    _initUserId();
+  }
+
+  Future<void> _initUserId() async {
+    final prefs = await SharedPreferences.getInstance();
+    userId = prefs.getInt('user_id') ?? -1;
+    final userEmail = prefs.getString('user_email') ?? 'no email';
+    print("💰 AgregarRegistroController initialized with userId: $userId (email: $userEmail)");
+    
+    if (userId == -1) {
+      print("⚠️ No hay userId en SharedPreferences al agregar registro");
+    }
+    
+    await cargarCatalogos();
   }
 
   // Cargar catálogos del backend
@@ -122,6 +136,7 @@ class AgregarRegistroController extends GetxController {
         final homeController = Get.find<HomeController>();
         await homeController.cargarRegistros();
         await homeController.cargarCuentas(); // Actualizar saldos
+        await homeController.cargarBalanceTotal(); // Actualizar balance total
       } catch (e) {
         print('HomeController no encontrado: $e');
       }

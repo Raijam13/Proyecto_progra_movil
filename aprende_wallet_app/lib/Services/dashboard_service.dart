@@ -63,7 +63,8 @@ class DashboardService {
       );
 
       if (response.statusCode == 200) {
-        return json.decode(response.body);
+        final body = json.decode(response.body);
+        return body['data'] ?? {};
       } else if (response.statusCode == 400) {
         throw Exception('Parámetro user_id es obligatorio');
       } else {

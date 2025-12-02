@@ -44,11 +44,16 @@ class HomeController extends GetxController {
       id = prefs.getInt('user_id');
     }
 
+    // Obtener también el email para debug
+    final userEmail = prefs.getString('user_email') ?? 'no email';
+    
     userId = id ?? -1;
-    print("HomeController initialized with userId: $userId");
+    print("🔑 HomeController initialized with userId: $userId (email: $userEmail)");
 
     if (userId != -1) {
       cargarDatos();
+    } else {
+      print("⚠️ No se encontró userId en SharedPreferences");
     }
   }
 

@@ -70,11 +70,22 @@ class SignInController extends GetxController {
         print("⚠️ USUARIO ES NULL — NO SE GUARDARÁ ID");
       } else if (usuario is Map && usuario["id"] != null) {
         try {
-          final int id = int.parse(usuario["id"].toString());
+          // El backend devuelve el id como int, no como string
+          final int id = usuario["id"] is int 
+              ? usuario["id"] 
+              : int.parse(usuario["id"].toString());
           await prefs.setInt("user_id", id);
           print("✅ ID de usuario guardado: $id");
+          
+          // Guardar también otros datos del usuario
+          if (usuario["correo"] != null) {
+            await prefs.setString("user_email", usuario["correo"]);
+          }
+          if (usuario["nombres"] != null) {
+            await prefs.setString("user_name", usuario["nombres"]);
+          }
         } catch (e) {
-          print("⚠️ Error parsing ID: $e");
+          print("⚠️ Error al guardar datos del usuario: $e");
         }
       } else {
         print("⚠️ USUARIO NO TIENE ID O FORMATO INCORRECTO: $usuario");

@@ -22,7 +22,6 @@ class AgregarPagoPlanificadoController extends GetxController {
 
   // IDs for backend
   int? _idCuenta;
-  int? _idCategoria;
 
   // Catalogs
   final RxList<dynamic> categoriasList = [].obs;
@@ -123,7 +122,6 @@ class AgregarPagoPlanificadoController extends GetxController {
       item,
     ) {
       categoria.value = item['nombre'];
-      _idCategoria = item['id'];
     });
   }
 

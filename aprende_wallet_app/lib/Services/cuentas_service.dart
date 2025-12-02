@@ -24,7 +24,8 @@ class CuentasService {
       );
 
       if (response.statusCode == 200) {
-        final List<dynamic> data = json.decode(response.body);
+        final body = json.decode(response.body);
+        final List<dynamic> data = body['data'] ?? [];
         return data.cast<Map<String, dynamic>>();
       } else if (response.statusCode == 400) {
         throw Exception('Parámetro user_id es obligatorio');
@@ -82,7 +83,8 @@ class CuentasService {
       );
 
       if (response.statusCode == 201) {
-        return json.decode(response.body);
+        final body = json.decode(response.body);
+        return body['data'] ?? {};
       } else if (response.statusCode == 400) {
         final error = json.decode(response.body);
         throw Exception(error['message'] ?? 'Error al crear cuenta');
