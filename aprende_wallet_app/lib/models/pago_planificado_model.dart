@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 class PagoPlanificado {
   final int id;
   final String nombre;
